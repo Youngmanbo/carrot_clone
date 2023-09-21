@@ -88,8 +88,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'carrot_market',
         'USER': 'admin',
-        'PASSWORD': '3526',
-        'HOST': '222.103.0.162',
+        'PASSWORD': secrets['POSTGRE_KEY'],
+        'HOST': secrets['POSTGRE_HOST'],
         'PORT': '5432',
     }
 }
