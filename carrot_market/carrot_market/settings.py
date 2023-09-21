@@ -85,8 +85,12 @@ WSGI_APPLICATION = 'carrot_market.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'carrot_market',
+        'USER': 'admin',
+        'PASSWORD': '3526',
+        'HOST': '222.103.0.162',
+        'PORT': '5432',
     }
 }
 
