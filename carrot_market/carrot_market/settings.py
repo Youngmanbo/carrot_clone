@@ -86,8 +86,8 @@ WSGI_APPLICATION = 'carrot_market.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'carrot_market',
-        'USER': 'admin',
+        'NAME': 'shakecarrot',
+        'USER': 'postgres',
         'PASSWORD': secrets['POSTGRE_KEY'],
         'HOST': secrets['POSTGRE_HOST'],
         'PORT': '5432',
