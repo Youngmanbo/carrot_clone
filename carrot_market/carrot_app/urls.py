@@ -6,4 +6,6 @@ urlpatterns = [
     path('write/', views.write, name='write'),
     path('trade/', views.trade, name='trade'),
     path('trade_post/<int:post_id>/', views.trade_post, name='trade_post'),
+    path('login/', views.login, name='login'),
+    path('register/', views.register, name='register'),
 ]
