@@ -18,3 +18,9 @@ def trade(request):
 
 def trade_post(request):
     return render(request, 'carrot_app/trade_post.html')
+
+def login(request):
+    return render(request, 'registration/login.html')
+
+def register(request):
+    return render(request, 'registration/register.html')
