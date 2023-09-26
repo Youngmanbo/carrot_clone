@@ -14,4 +14,6 @@ urlpatterns = [
     path('trade_post/<int:post_id>/', views.trade_post, name='trade_post'),
     path('login/', views.login, name='login'),
     path('register/', views.register, name='register'),
+    path('chat/', views.chat, name='chat'),
+    path('main/', views.logout, name='logout'),
 ]
