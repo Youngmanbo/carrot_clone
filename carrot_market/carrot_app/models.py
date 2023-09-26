@@ -9,7 +9,7 @@ class Item(models.Model):
     title               = models.CharField(max_length = 50)
     content             = models.TextField()
     price               = models.CharField(max_length = 20)
-    item_views          = models.IntegerField()
+    item_views          = models.PositiveIntegerField(default = 0)
     create_at           = models.DateTimeField(auto_now_add = True)
     dibs                = models.BooleanField(default = False)
     category            = models.CharField(max_length = 10)
