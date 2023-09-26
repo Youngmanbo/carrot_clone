@@ -47,10 +47,12 @@ def write(request):
         if user_profile.region_certification == 'Y':
             return render(request, 'carrot_app/write.html')
         else:
-            return redirect('location', alert_message='동네인증이 필요합니다.')
+            messages.success('동네인증이 필요합니다.')
+            return redirect('location')
         
     except UserProfile.DoesNotExist:
-        return redirect('location', alert_message='동네인증이 필요합니다.')
+        messages.success(request, '동네인증이 필요합니다.')
+        return redirect('location')
     
 def login(request):
     return render(request, 'registration/login.html')
