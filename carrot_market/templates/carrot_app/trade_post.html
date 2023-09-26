@@ -11,6 +11,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/trade_post.css' %}"/>
     <link rel="stylesheet" type="text/css" href="{% static 'css/nav.css' %}"/>
     <link rel="stylesheet" type="text/css" href="{% static 'css/footer.css' %}"/>
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'dangun_app/favicon.ico' %}" />
     <title>중고거래 상세보기</title>
   </head>
 
@@ -28,14 +29,14 @@
               </div>
               {% if request.user.username == post.user.username %}
                 <div class="flex-box button-box">
-                  <a href="{% url 'dangun_app:edit' post.id %}">
+                  <a href="{% url 'edit' post.id %}">
                     <button class="grey">수정하기</button>
                   </a>
                   <button class="orange">채팅보기</button>
                 </div>
               {% else %}
                 <div class="button-box">
-                  <a href="{% url 'dangun_app:chat' %}">
+                  <a href="{% url 'chat' %}">
                     <button class="orange">채팅하기</button>
                   </a>
                 </div>
