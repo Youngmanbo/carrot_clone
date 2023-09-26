@@ -1,4 +1,3 @@
-{% load custom_filter%}
 {% load static %}{% load humanize %}
 <!DOCTYPE html>
 <html>
@@ -13,9 +12,10 @@
   </head>
 
   <body>
-    {% include 'dangun_app/nav.html' %}
+    {% include 'carrot_app/nav.html' %}
     <div class="content-box">
-      <a href="{% url 'dangun_app:write' %}">
+      {% comment %} <a href="{% url 'carrot_app:write' %}"> {% endcomment %}
+      {% comment %} <a href="{% url 'write' %}"> {% endcomment %}
         <div class="floating-button">
           거래글쓰기
         </div>
@@ -68,7 +68,7 @@
       </div>
     </div>
   </div>
-  {% include 'dangun_app/footer.html' %}
+  {% include 'carrot_app/footer.html' %}
 
 </body>
 

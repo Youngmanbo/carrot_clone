@@ -11,11 +11,12 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/nav.css' %}"/>
     <link rel="stylesheet" type="text/css" href="{% static 'css/footer.css' %}"/>
     <link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}"/>
-    <title>회원가입</title>
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'dangun_app/favicon.ico' %}" />
+    <title>당신 근처의 당근 | 회원가입</title>
   </head>
 
   <body class="back-ye">
-    {% include 'dangun_app/nav.html' %}
+    {% include 'carrot_app/nav.html' %}
     <div class="container">
       {% block content %}
         <div class="login-container">
@@ -26,7 +27,7 @@
           </form>
           <p class="register-reco">
             이미 계정이 있으신가요?
-            <a href="{% url 'dangun_app:login' %}" class="bold">로그인</a>
+            <a href="{% url 'login' %}" class="bold">로그인</a>
           </p>
         </div>
       {% endblock %}
@@ -37,5 +38,4 @@
       </script>
     {% endif %}
   </body>
-
 </html>
