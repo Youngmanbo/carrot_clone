@@ -35,3 +35,11 @@ class Chatting(models.Model):
     message             = models.TextField()
     is_read             = models.BooleanField(default = False)
     create_at           = models.DateTimeField(auto_now = True)
+    
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    region = models.CharField(max_length=100, null=True)
+    region_certification = models.CharField(max_length=1, default='N')
+
+    def __str__(self):
+        return f'{self.user.username} Profile'
