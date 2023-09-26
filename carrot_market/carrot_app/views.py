@@ -3,27 +3,55 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import JsonResponse
 
-from .models import Post,UserProfile
-from django.contrib.auth.decorators import login_required
+from .models import Item,UserProfile
 
 # Create your views here.
 def main(request):
     return render(request, 'carrot_app/main.html')
 
+def trade(request):
+    try:
+        item = Item.objects.filter(is_sold=False).order_by('-views')
+
+    except:
+        item = None
+
+    content = {
+        'posts': item
+    }
+    
+    return render(request, 'carrot_app/trade.html', content)
+
+def trade_post(request, post_id):
+    item = Item.objects.get(id=post_id)
+
+    if request.user.is_authenticated:
+        if request.user != item.user_id:
+            item.item_views += 1
+            item.save()
+    else:
+        item.item_views += 1
+        item.save()
+
+    content = {
+        'post': item
+    }
+
+    return render(request, 'carrot_app/trade_post.html', content)
+
 # @login_required
 def write(request):
     try:
-        pass
-    except:
-        pass
-    return render(request, 'carrot_app/write.html')
+        user_profile = UserProfile.objects.get(user = request.user)
 
-def trade(request):
-    return render(request, 'carrot_app/trade.html')
-
-def trade_post(request):
-    return render(request, 'carrot_app/trade_post.html')
-
+        if user_profile.region_certification == 'Y':
+            return render(request, 'carrot_app/write.html')
+        else:
+            return redirect('location', alert_message='동네인증이 필요합니다.')
+        
+    except UserProfile.DoesNotExist:
+        return redirect('location', alert_message='동네인증이 필요합니다.')
+    
 def login(request):
     return render(request, 'registration/login.html')
 
