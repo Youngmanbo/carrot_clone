@@ -1,13 +1,13 @@
 from django.shortcuts               import render, redirect
 from django.contrib.auth.decorators import login_required
-from django.contrib                 import messages
+from django.contrib                 import auth, messages
 from django.http                    import JsonResponse
 # 가입 화면
 from django.contrib.auth.models     import User
 from django.contrib.auth            import authenticate, login
 from django.shortcuts               import render, redirect
 from .forms                         import CustomLoginForm, CustomRegistrationForm
-from django.contrib.auth            import login as custom_login
+from django.contrib.auth            import login as custom_login, logout
 
 # from .models import Post,UserProfile
 from django.contrib.auth.decorators import login_required
@@ -89,6 +89,7 @@ def chat(request):
 
 @login_required
 def logout(request):
+    auth.logout(request)
     return render(request, 'carrot_app/main.html')
 
     
