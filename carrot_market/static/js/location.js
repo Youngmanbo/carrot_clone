@@ -34,6 +34,11 @@ if (navigator.geolocation) {
 
           document.getElementById("region-info").innerText =
             "현재위치는 " + result[0].address.address_name + "입니다.";
+          
+          inputBox = document.getElementById('region-setting')
+          if (inputBox.value == null){
+            inputBox.value = result[0].address.address_name;
+          } 
 
           let regionSettingValue = document.querySelector(
             'input[name="region-setting"]'

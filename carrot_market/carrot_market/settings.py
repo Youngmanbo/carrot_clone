@@ -93,9 +93,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'shakecarrot',
-        'USER': 'postgres',
-        'PASSWORD': secrets['POSTGRE_KEY'],
-        'HOST': secrets['POSTGRE_HOST'],
+        'USER': 'carrot_project_user',
+        'PASSWORD': secrets['POSTGRE_KEY2'],
+        'HOST': secrets['POSTGRE_HOST2'],
         'PORT': '5432',
     }
 }
