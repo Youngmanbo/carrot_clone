@@ -3,11 +3,15 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import JsonResponse
 
-from .models import Item,UserProfile
+from .models import Item,UserProfile,ItemImage
+from .forms import ItemPost
 
 # Create your views here.
 def main(request):
     return render(request, 'carrot_app/main.html')
+
+def chat(request):
+    return render(request, 'carrot_app/chat.html')
 
 def trade(request):
     try:
@@ -53,7 +57,49 @@ def write(request):
     except UserProfile.DoesNotExist:
         messages.success(request, '동네인증이 필요합니다.')
         return redirect('location')
+
+def create_item(request):
+    if request.method == 'POST':
+        form = ItemPost(request.POST, request.FILES)
+        if form.is_valid():
+            item = form.save(commit=False)
+            item.user_id = request.username
+            item.save()
+            return redirect('trade_post', post_id=item.post_id)
+    else:
+        form = ItemPost()
     
+    content = {
+        'form': ItemPost()
+    }
+
+    return render(request, 'carrot_app/trade_post.html', content)
+
+def edit(request, id):
+    item = Item.objects.get(id=id)
+    
+    if item:
+        item.content = item.content.strip()
+        images = ItemImage.objects.filter(item_id=id)
+
+    if request.method == "POST":
+        item.title = request.POST['title']
+        item.price = request.POST['price']
+        item.content = request.POST['content']
+        item.sale_place = request.POST['sale_place']
+        # if 'item_image' in request.FILES:
+        #     images.item_image = request.FILES['item_image']
+        item.save()
+        return redirect('trade_post', post_id=id)
+    
+    content = {
+        'post': item,
+        # 'item_image': images.item_image
+    }
+
+    return render(request, 'carrot_app/write.html', content)
+
+
 def login(request):
     return render(request, 'registration/login.html')
 
