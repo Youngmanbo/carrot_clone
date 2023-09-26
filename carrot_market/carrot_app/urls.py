@@ -12,11 +12,11 @@ urlpatterns = [
     path('chat/', views.chat, name='chat'),
     path('trade/', views.trade, name='trade'),
     path('trade_post/<int:post_id>/', views.trade_post, name='trade_post'),
-    path('login/', views.custom_login, name='login'),
+    path('login/', views.login, name='login'),
 #   path('logout/', views.logout, name='logout'),
     path('main/', views.logout, name='logout'),
     path('register/', views.register, name='register'),
-    path('chat/', views.chat, name='chat'),
+    path('search/', views.search, name='search'),
     path('regionshop/', views.region_shop, name='region_shop'),
     path('region_registration', views.region_shop_registration, name='region_registration'),
 ]

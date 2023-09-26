@@ -4,7 +4,7 @@ from django.http                    import JsonResponse
 from django.contrib.auth.forms      import UserCreationForm
 from django.contrib                 import auth, messages
 from django.contrib.auth.models     import User
-from django.contrib.auth            import authenticate, login, logout
+from django.contrib.auth            import authenticate
 from django.contrib.auth            import login as custom_login
 from django.shortcuts               import render, redirect
 from .models                        import *
@@ -13,9 +13,6 @@ from .forms                         import *
 # Create your views here.
 def main(request):
     return render(request, 'carrot_app/main.html')
-
-def chat(request):
-    return render(request, 'carrot_app/chat.html')
 
 def trade(request):
     try:
@@ -203,11 +200,8 @@ def set_region_certification(request):
         request.user.profile.save()
         messages.success(request, "인증되었습니다")
         return redirect('dangun_app:location')
-    
-def chat():
-    pass
 
-def logout():
+def search():
     pass
 
 def region_shop(request):
