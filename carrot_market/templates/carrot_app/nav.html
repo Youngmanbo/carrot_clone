@@ -5,8 +5,7 @@
     <div class="full-box flex-box between">
       <div class="flex-box">
         <div class="logo">
-          {% comment %} <a href="{% url 'dangun_app:main' %}"> {% endcomment %}
-          <a href="#">
+          <a href="{% url 'main' %}">
             <img src="{% static 'img/logo.png' %}" alt=""/>
           </a>
         </div>
@@ -23,8 +22,7 @@
         </div>
       </div>
       <div class="flex-box gap8">
-        {% comment %} <form method="GET" action="{% url 'dangun_app:search' %}"> {% endcomment %}
-        <form method="GET" action="#">
+        <form method="GET" action="{% url 'search' %}"> 
           <input type="text" id="search" name="search" class="search" placeholder="물품이나 동네를 검색해보세요"/>
         </form>
         {% if user.is_authenticated %}
@@ -32,8 +30,7 @@
           <a href="{% url 'logout' %}" class="ghost-button">로그아웃</a>
 
         {% else %}
-          {% comment %} <a href="{% url 'dangun_app:login' %}" class="ghost-button" style="color: #1e1e1e">로그인</a> {% endcomment %}
-          <a href="#" class="ghost-button" style="color: #1e1e1e">로그인</a>
+          <a href="{% url 'login' %}" class="ghost-button" style="color: #1e1e1e">로그인</a>
         {% endif %}
       </div>
     </div>
