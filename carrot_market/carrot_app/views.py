@@ -1,23 +1,18 @@
 from django.shortcuts               import render, redirect
 from django.contrib.auth.decorators import login_required
-from django.contrib                 import auth, messages
 from django.http                    import JsonResponse
-# 가입 화면
+from django.contrib.auth.forms      import UserCreationForm
+from django.contrib                 import auth, messages
 from django.contrib.auth.models     import User
-from django.contrib.auth            import authenticate, login
+from django.contrib.auth            import authenticate
+from django.contrib.auth            import login as custom_login
 from django.shortcuts               import render, redirect
-from .forms                         import CustomLoginForm, CustomRegistrationForm
-from django.contrib.auth            import login as custom_login, logout
-from django.contrib.auth.decorators import login_required
-from .models                        import Item,UserProfile,ItemImage
-from .forms                         import ItemPost
+from .models                        import *
+from .forms                         import *
 
 # Create your views here.
 def main(request):
     return render(request, 'carrot_app/main.html')
-
-def chat(request):
-    return render(request, 'carrot_app/chat.html')
 
 def trade(request):
     try:
@@ -102,7 +97,6 @@ def edit(request, id):
         'post': item,
         # 'item_image': images.item_image
     }
-
     return render(request, 'carrot_app/write.html', content)
 
 
@@ -110,7 +104,7 @@ def edit(request, id):
 def login(request):
     # 이미 로그인한 경우
     if request.user.is_authenticated:
-        return redirect('carrot_app:main')
+        return redirect('main')
     
     else:
         form = CustomLoginForm(data=request.POST or None)
@@ -190,7 +184,7 @@ def set_region(request):
                 user_profile.region = region
                 user_profile.save()
 
-                return redirect('carrot_app:location')
+                return redirect('dangun_app:location')
             except Exception as e:
                 return JsonResponse({"status": "error", "message": str(e)})
         else:
@@ -205,4 +199,26 @@ def set_region_certification(request):
         request.user.profile.region_certification = 'Y'
         request.user.profile.save()
         messages.success(request, "인증되었습니다")
-        return redirect('carrot_app:location')
+        return redirect('dangun_app:location')
+
+def search():
+    pass
+
+def region_shop(request):
+    form = RegionShopForm()
+    return render(request, 'carrot_app/region_shop.html', {'form':form})
+
+def region_shop_registration(request):
+    f = RegionShopForm()
+    form_set = inlineformset_factory(
+    RegionShop,
+    RegionShopProductPrice,
+    fields = (
+        'product_name',
+        'product_price',
+    ),
+    extra=2,
+    can_delete=True,
+    )
+    context = {'formset':form_set(instance=RegionShop())}
+    return render(request, 'carrot_app/region_shop_registration.html', context)
