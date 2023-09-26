@@ -11,7 +11,7 @@ def main(request):
 
 def trade(request):
     try:
-        item = Item.objects.filter(is_sold=False).order_by('-views')
+        item = Item.objects.filter(is_sold=False).order_by('-item_views')
 
     except:
         item = None
@@ -47,7 +47,7 @@ def write(request):
         if user_profile.region_certification == 'Y':
             return render(request, 'carrot_app/write.html')
         else:
-            messages.success('동네인증이 필요합니다.')
+            messages.success(request, '동네인증이 필요합니다.')
             return redirect('location')
         
     except UserProfile.DoesNotExist:
