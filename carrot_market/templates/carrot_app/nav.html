@@ -6,7 +6,7 @@
       <div class="flex-box">
         <div class="logo">
           {% comment %} <a href="{% url 'dangun_app:main' %}"> {% endcomment %}
-          <a href="{% url 'main' %}">
+          <a href="#">
             <img src="{% static 'img/logo.png' %}" alt=""/>
           </a>
         </div>
@@ -33,7 +33,7 @@
 
         {% else %}
           {% comment %} <a href="{% url 'dangun_app:login' %}" class="ghost-button" style="color: #1e1e1e">로그인</a> {% endcomment %}
-          <a href="{% url 'login' %}" class="ghost-button" style="color: #1e1e1e">로그인</a>
+          <a href="#" class="ghost-button" style="color: #1e1e1e">로그인</a>
         {% endif %}
       </div>
     </div>

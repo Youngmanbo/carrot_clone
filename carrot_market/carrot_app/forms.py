@@ -1,4 +1,5 @@
 from django import forms
+from .models import Item
 # from .models import Post
 
 
@@ -30,3 +31,8 @@ class CustomRegistrationForm(forms.Form):
         label='비밀번호 확인',
         label_suffix='', 
     )
+    
+class ItemPost(forms.ModelForm):
+    class Meta:
+        model = Item
+        fields = ['title', 'price', 'content', 'sale_place']
