@@ -35,6 +35,12 @@ if (navigator.geolocation) {
           document.getElementById("region-info").innerText =
             "현재위치는 " + result[0].address.address_name + "입니다.";
           
+          regionInputBox = document.getElementById("region-setting");
+          if (regionInputBox != null){
+              regionInputBox.value = result[0].address.address_name;
+          }else{
+            console.log(regionInputBox.value)
+          } // 마이페이지가 없을경우 해당 위치 그대로 리턴하게 설정
           inputBox = document.getElementById('region-setting')
           if (inputBox.value == null){
             inputBox.value = result[0].address.address_name;
