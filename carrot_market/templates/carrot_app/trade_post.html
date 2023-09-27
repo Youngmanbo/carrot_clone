@@ -49,12 +49,12 @@
                 <h3>{{ post.price |intcomma}}
                   원</h3>
               </div>
-              <p>{{ post.description }}</p>
+              <p>{{ post.content }}</p>
               <div class="location-views-box flex-box between">
                 <p>희망 거래장소 |
-                  {{ post.location }}</p>
+                  {{ post.sale_place }}</p>
                 <p>조회수
-                  {{ post.view_num }}</p>
+                  {{ post.item_views }}</p>
               </div>
             </div>
           {% endblock %}
