@@ -41,6 +41,12 @@ def trade_post(request, post_id):
         item.item_views += 1
         item.save()
 
+    if request.method == "POST":
+        if 'delete' in request.POST:
+            if item:
+                item.delete()
+                return redirect('trade')
+
     content = {
         'post': item,
         'users': users
