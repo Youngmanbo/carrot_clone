@@ -210,7 +210,7 @@ def region_shop(request):
 
 def region_shop_registration(request):
     f = RegionShopForm()
-    form_set = inlineformset_factory(
+    product_set = inlineformset_factory(
     RegionShop,
     RegionShopProductPrice,
     fields = (
@@ -220,5 +220,38 @@ def region_shop_registration(request):
     extra=2,
     can_delete=True,
     )
-    context = {'formset':form_set(instance=RegionShop())}
+    image_set = inlineformset_factory(
+        RegionShop,
+        RegionShopImages,
+        fields = (
+            'image',
+        ),
+        extra=2,
+        can_delete=True
+    )
+    
+    if request.method == "POST":
+        form = RegionShopForm(request.POST)
+        product_set = product_set(request.POST, instance=RegionShop())
+        image_set = image_set(request.POST, request.FILES, instance=RegionShop())
+        
+        if form.is_valid() and product_set.is_valid() and image_set.is_valid():
+            region = form.save()
+            p_instance = product_set.save(commit=False)
+            image_instance = image_set.save(commit=False)
+            
+            for instance in p_instance:
+                instance.region_shop_id = region
+                instance.save()
+            
+            for instance in image_instance:
+                instance.shop_id = region
+                instance.save()
+            
+            return redirect('main')
+    
+    context = {'formset':product_set(instance=RegionShop()),
+               'form':f, 
+               'image_set':image_set(instance=RegionShop())
+               }
     return render(request, 'carrot_app/region_shop_registration.html', context)
