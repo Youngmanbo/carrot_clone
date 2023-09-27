@@ -64,9 +64,9 @@ def create_item(request):
         form = ItemPost(request.POST, request.FILES)
         if form.is_valid():
             item = form.save(commit=False)
-            item.user_id = request.username
+            item.user_id = request.user
             item.save()
-            return redirect('trade_post', post_id=item.post_id)
+            return redirect('trade_post', post_id=item.id)
     else:
         form = ItemPost()
     
@@ -177,6 +177,7 @@ def location(request):
 def set_region(request):
     if request.method == "POST":
         region = request.POST.get('region-setting')
+        print(region)
 
         if region:
             try:
@@ -184,7 +185,7 @@ def set_region(request):
                 user_profile.region = region
                 user_profile.save()
 
-                return redirect('dangun_app:location')
+                return redirect('location')
             except Exception as e:
                 return JsonResponse({"status": "error", "message": str(e)})
         else:
@@ -199,7 +200,7 @@ def set_region_certification(request):
         request.user.profile.region_certification = 'Y'
         request.user.profile.save()
         messages.success(request, "인증되었습니다")
-        return redirect('dangun_app:location')
+        return redirect('location')
 
 def search():
     pass
@@ -216,6 +217,7 @@ def region_shop_registration(request):
     fields = (
         'product_name',
         'product_price',
+        'option'
     ),
     extra=2,
     can_delete=True,
