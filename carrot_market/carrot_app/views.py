@@ -17,18 +17,21 @@ def main(request):
 def trade(request):
     try:
         item = Item.objects.filter(is_sold=False).order_by('-item_views')
-
+        users = UserProfile.objects.all()
     except:
         item = None
+        users = None
 
     content = {
-        'posts': item
+        'posts': item,
+        'users': users
     }
     
     return render(request, 'carrot_app/trade.html', content)
 
 def trade_post(request, post_id):
     item = Item.objects.get(id=post_id)
+    users = UserProfile.objects.all()
 
     if request.user.is_authenticated:
         if request.user != item.user_id:
@@ -39,7 +42,8 @@ def trade_post(request, post_id):
         item.save()
 
     content = {
-        'post': item
+        'post': item,
+        'users': users
     }
 
     return render(request, 'carrot_app/trade_post.html', content)
@@ -64,9 +68,9 @@ def create_item(request):
         form = ItemPost(request.POST, request.FILES)
         if form.is_valid():
             item = form.save(commit=False)
-            item.user_id = request.username
+            item.user_id = request.user
             item.save()
-            return redirect('trade_post', post_id=item.post_id)
+            return redirect('trade_post', post_id=item.id)
     else:
         form = ItemPost()
     
@@ -81,7 +85,7 @@ def edit(request, id):
     
     if item:
         item.content = item.content.strip()
-        images = ItemImage.objects.filter(item_id=id)
+        # images = ItemImage.objects.filter(item_id=id)
 
     if request.method == "POST":
         item.title = request.POST['title']
