@@ -24,10 +24,14 @@
             <img src="{{ post.images.url }}" alt="{{ post.title }}" class="block-box">
             <div class="flex-box between info-button-box">
               <div class="user-info">
-                <h6>{{ post.user }}</h6>
-                <p>{{ post.location }}</p>
+                <h6>{{ post.user_id }}</h6>
+                {% for user in users %}
+                  {% if user.user_id == post.user_id_id %}
+                    <p>{{ user.region }}</p>
+                  {% endif %}
+                {% endfor %}
               </div>
-              {% if request.user.username == post.user.username %}
+              {% if request.user.id == post.user_id_id %}
                 <div class="flex-box button-box">
                   <a href="{% url 'edit' post.id %}">
                     <button class="grey">수정하기</button>

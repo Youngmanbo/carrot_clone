@@ -50,7 +50,11 @@
                 <div class="card-info-box">
                   <h5>{{ post.title }}</h5>
                   <p class="bold">{{ post.price |intcomma}}원</p>
-                  <p>{{ post.location }}</p>
+                  {% for user in users %}
+                    {% if user.user_id == post.user_id_id %}
+                      <p>{{ user.region }}</p>
+                    {% endif %}
+                  {% endfor %}
                   <div class="flex-box">
                     <p>조회
                       {{ post.item_views }}</p>
