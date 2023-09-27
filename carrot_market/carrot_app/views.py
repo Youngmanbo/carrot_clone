@@ -7,6 +7,7 @@ from django.contrib.auth.models     import User
 from django.contrib.auth            import authenticate
 from django.contrib.auth            import login as custom_login
 from django.shortcuts               import render, redirect
+from django.db.models               import Q
 from .models                        import *
 from .forms                         import *
 
@@ -54,7 +55,7 @@ def trade_post(request, post_id):
 
     return render(request, 'carrot_app/trade_post.html', content)
 
-# @login_required
+@login_required
 def write(request):
     try:
         user_profile = UserProfile.objects.get(user = request.user)
@@ -211,8 +212,23 @@ def set_region_certification(request):
         messages.success(request, "인증되었습니다")
         return redirect('dangun_app:location')
 
-def search():
-    pass
+def search(request):
+    query = request.GET.get('search')
+    
+    if query:
+        results = Item.objects.filter(Q(title__icontains=query))
+        # | Q(title__icontains=query)
+        users = UserProfile.objects.all()
+    else:
+        results = None
+        users = None
+
+    content = {
+        'posts': results,
+        'users': users
+    }
+    
+    return render(request, 'carrot_app/search.html', content)
 
 def region_shop(request):
     form = RegionShopForm()
