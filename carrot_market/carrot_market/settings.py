@@ -57,6 +57,8 @@ INSTALLED_APPS = [
     'rest_framework',
 ]
 
+ASGI_APPLICATION = 'carrot_market.asgi.application'
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
