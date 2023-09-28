@@ -144,7 +144,7 @@ def register(request):
                 # 유저를 로그인 상태로 만듦
                 custom_login(request, user)
             
-                return redirect('carrot_app:login')
+                return redirect('login')
             else:
                 form.add_error('password2', '비밀번호가 일치하지 않습니다.')
     else:
