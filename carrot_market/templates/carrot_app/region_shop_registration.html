@@ -6,6 +6,15 @@
     <title>Document</title>
 </head>
 <body>
-    {{formset.as_p}}
+    <form action="{% url 'region_registration' %}" method='POST' enctype="multipart/form-data">
+        {% csrf_token %}
+        <p>가게이름 : {{form.shopname}}</p>
+        <p>주소 : {{form.address}}</p>
+        <p>썸네일 : {{form.thumnail}}</p>
+        <p>가게 정보 : {{form.shopinfo}}</p>
+        {{formset.as_p}}
+        {{image_set.as_p}}
+        <input type="submit">
+    </form>
 </body>
 </html>

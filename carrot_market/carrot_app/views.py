@@ -205,21 +205,30 @@ def search():
     pass
 
 def region_shop(request):
-    form = RegionShopForm()
-    return render(request, 'carrot_app/region_shop.html', {'form':form})
+    queryset = RegionShop.objects.all()
+    context = {'data':queryset}
+    
+    return render(request, 'carrot_app/region_shop.html', context)
 
 def region_shop_registration(request):
+    
+    # 레기온 샾 기본 폼
     f = RegionShopForm()
-    product_set = inlineformset_factory(
-    RegionShop,
-    RegionShopProductPrice,
-    fields = (
-        'product_name',
-        'product_price',
-    ),
-    extra=2,
-    can_delete=True,
+    
+    # 래기온 프로덕트 프라이스 모델폼셋
+    product_formset = inlineformset_factory(
+        RegionShop,
+        RegionShopProductPrice,
+        fields = (
+            'product_name',
+            'product_price',
+            'option'
+        ),
+        extra=2,
+        can_delete=True,
     )
+    
+    # 레기온 이미지모델 폼셋 
     image_set = inlineformset_factory(
         RegionShop,
         RegionShopImages,
@@ -231,13 +240,13 @@ def region_shop_registration(request):
     )
     
     if request.method == "POST":
-        form = RegionShopForm(request.POST)
-        product_set = product_set(request.POST, instance=RegionShop())
+        form = RegionShopForm(request.POST, request.FILES)
+        product_formset = product_formset(request.POST, instance=RegionShop())
         image_set = image_set(request.POST, request.FILES, instance=RegionShop())
         
-        if form.is_valid() and product_set.is_valid() and image_set.is_valid():
+        if form.is_valid() and product_formset.is_valid() and image_set.is_valid():
             region = form.save()
-            p_instance = product_set.save(commit=False)
+            p_instance = product_formset.save(commit=False)
             image_instance = image_set.save(commit=False)
             
             for instance in p_instance:
@@ -249,8 +258,10 @@ def region_shop_registration(request):
                 instance.save()
             
             return redirect('main')
+        else:
+            return redirect('region_registration')
     
-    context = {'formset':product_set(instance=RegionShop()),
+    context = {'formset':product_formset(instance=RegionShop()),
                'form':f, 
                'image_set':image_set(instance=RegionShop())
                }

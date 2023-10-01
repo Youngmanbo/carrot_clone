@@ -18,5 +18,5 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('search/', views.search, name='search'),
     path('regionshop/', views.region_shop, name='region_shop'),
-    path('region_registration', views.region_shop_registration, name='region_registration'),
+    path('region_registration/', views.region_shop_registration, name='region_registration'),
 ]
