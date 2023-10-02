@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/reset.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/global.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/nav.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/footer.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/shop_detail.css' %}"/>
+</head>
+<body>
+    {% include 'carrot_app/nav.html' %}
+    <div class="region-detail">
+        <div class="image-container">
+            <ul class='image-list'>
+                {% for image in data.image.all %}
+                    <li class='image-item'>
+                        <img src="{{image.image.url}}" alt="">
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="shop-info">
+            <div class="thumnail">
+                {% if data.thumnail %}
+                    <img src="{{data.thumnail.url}}" alt="">
+                {% else %}
+                    <img src="" alt="">
+                {% endif %}
+            </div>
+            <div class="list-content-item-name-wraper">
+                <div class="list-content-item-name">
+                    {{data.shopname}}
+                </div>
+                <div class="list-content-item-region">
+                    {{data.neighborhood}}
+                </div>
+            </div>
+        </div>
+        <div class="shop-detail region-flex">
+            <h6>정보</h6>
+            <p>{{data.shopinfo}}</p>
+            <div class="shop-location">
+
+            </div>
+        </div>
+        <div class="shop-price region-flex">
+            <h6>가격</h6>
+            <ul role='list' class='price-list'>
+                {% for price_data in data.price.all %}
+                    <li class='list-item'>
+                        <div>
+                            <div class="list-item-price">
+                                <span class='product-name'>{{price_data.product_name}}</span>
+                                <span class='product-space'></span>
+                                <span class='product-price'>{{price_data.product_price}}</span>
+                            </div>
+                            <p class="option">
+                                {{price_data.option}}
+                            </p>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+                
+        </div>
+    </div>
+    {% include 'carrot_app/footer.html' %}
+</body>
+</html>

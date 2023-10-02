@@ -1,5 +1,7 @@
 from django.urls import path
 from . import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('', views.main, name='main'),
@@ -19,4 +21,8 @@ urlpatterns = [
     path('search/', views.search, name='search'),
     path('regionshop/', views.region_shop, name='region_shop'),
     path('region_registration/', views.region_shop_registration, name='region_registration'),
+    path('region_shop_detail/<int:shop_id>', views.region_shop_detail_view, name='region_shop_detail')
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

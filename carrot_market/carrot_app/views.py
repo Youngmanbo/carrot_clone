@@ -210,6 +210,12 @@ def region_shop(request):
     
     return render(request, 'carrot_app/region_shop.html', context)
 
+def region_shop_detail_view(request, shop_id):
+    if request.method == 'GET':
+        data = RegionShop.objects.get(id=shop_id)
+        context = {'data':data}
+    return render(request, 'carrot_app/region_shop_detail.html', context)
+
 def region_shop_registration(request):
     
     # 레기온 샾 기본 폼
