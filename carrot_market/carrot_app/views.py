@@ -1,4 +1,4 @@
-from django.shortcuts               import render, redirect
+from django.shortcuts               import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http                    import JsonResponse
 from django.contrib.auth.forms      import UserCreationForm
@@ -7,6 +7,7 @@ from django.contrib.auth.models     import User
 from django.contrib.auth            import authenticate
 from django.contrib.auth            import login as custom_login
 from django.shortcuts               import render, redirect
+from django.db.models               import Q
 from .models                        import *
 from .forms                         import *
 
@@ -222,3 +223,70 @@ def region_shop_registration(request):
     )
     context = {'formset':form_set(instance=RegionShop())}
     return render(request, 'carrot_app/region_shop_registration.html', context)
+
+
+# 채팅테스트
+
+def index(request): 
+    return render(request, 'carrot_app/chat_index.html')
+
+
+# 채팅방 열기
+def chat_room(request, pk):
+    user = request.user
+    chat_room = get_object_or_404(ChatRoom, pk=pk)
+
+    # 내 ID가 포함된 방만 가져오기
+    chat_rooms = ChatRoom.objects.filter(Q(receiver_id=user) | Q(starter_id=user))
+
+    # 각 채팅방의 최신 메시지를 가져오기
+    chat_room_data = []
+    for room in chat_rooms:
+        latest_message = Message.objects.filter(chatroom=room).order_by('-timestamp').first()
+        if latest_message:
+            chat_room_data.append({
+                'chat_room': room,
+                'latest_message': latest_message.content,
+                'timestamp': latest_message.timestamp,
+            })
+
+
+    # post의 상태 확인 및 처리
+    if chat_room.item is None:
+        seller = None
+        item = None
+    else:
+        seller = chat_room.item.user_id
+        item = chat_room.item
+
+    return render(request, 'carrot_app/chat_room.html', {
+        'chat_room': chat_room,
+        'chat_room_data': chat_room_data,
+        'room_name': chat_room.pk,
+        'seller': seller,
+        'item': item,
+    })
+
+
+# 채팅방 생성 또는 참여
+def create_or_join_chat(request, pk):
+    item = get_object_or_404(Item, pk=pk)
+    user = request.user
+    chat_room = None
+    created = False
+
+    # 채팅방이 이미 존재하는지 확인
+    chat_rooms = ChatRoom.objects.filter(
+        Q(starter=user, receiver=item.user_id, item=item) |
+        Q(starter=item.user_id, receiver=user, item=item)
+    )
+    if chat_rooms.exists():
+        chat_room = chat_rooms.first()
+    else:
+        # 채팅방이 존재하지 않는 경우, 새로운 채팅방 생성
+        chat_room = ChatRoom(starter=user, receiver=item.user_id, item=item)
+        chat_room.save()
+        created = True
+
+    return JsonResponse({'success': True, 'chat_room_id': chat_room.pk, 'created': created})
+
