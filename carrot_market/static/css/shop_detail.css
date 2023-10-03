@@ -18,6 +18,14 @@ li > img {
     border-radius: 10px;
 }
 
+/*이미지 슬라이더*/
+.image-list .image-item{
+    display:none;
+}
+.image-list .image-item:first-child {
+    display: block;
+  }
+
 /* 썸네일 */
 .thumnail > img{
     width:50px;
@@ -85,9 +93,19 @@ li > img {
     margin-top: 15px;
 }
 .list-item-price {
+    margin-top: 15px;
     display:flex;
     justify-content: space-between;
 }
 .product-space{
     background-color:#212124;
+}
+.option{
+    display: flex;
+    align-items: center;
+    border-radius: 5px;
+    background-color: #F2F3F6;
+    margin-top: 10px;
+    height: auto;
+    padding:10px 10px 10px 10px;
 }

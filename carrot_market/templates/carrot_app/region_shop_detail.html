@@ -16,11 +16,20 @@
         <div class="image-container">
             <ul class='image-list'>
                 {% for image in data.image.all %}
-                    <li class='image-item'>
+                    <li class='image-item' id='slider{{forloop.counter}}'>
                         <img src="{{image.image.url}}" alt="">
                     </li>
                 {% endfor %}
             </ul>
+        </div>
+        <div class="controls">
+            {% for image in data.image.all %}
+                {% if forloop.counter == 1%}
+                    <input type="radio" name="slider" id="radio{{forloop.counter}}" checked>
+                {% else %}
+                    <input type="radio" name="slider" id="radio{{forloop.counter}}" >
+                {% endif %}  
+            {% endfor %}
         </div>
         <div class="shop-info">
             <div class="thumnail">
@@ -55,7 +64,7 @@
                             <div class="list-item-price">
                                 <span class='product-name'>{{price_data.product_name}}</span>
                                 <span class='product-space'></span>
-                                <span class='product-price'>{{price_data.product_price}}</span>
+                                <span class='product-price'>{{price_data.product_price}}원</span>
                             </div>
                             <p class="option">
                                 {{price_data.option}}
@@ -69,4 +78,5 @@
     </div>
     {% include 'carrot_app/footer.html' %}
 </body>
+<script src="{% static 'js/slide.js' %}"></script>
 </html>
