@@ -22,9 +22,8 @@
           <div class="full-box trade-box column">
             <div class="flex-box full-box card-container between">
               {% for post in posts %}
-
                 <div class="card-box">
-                  <a href="{% url 'dangun_app:trade_post' post.pk %}" class="trade-text-link">
+                  <a href="{% url 'trade_post' post.pk %}" class="trade-text-link">
                     <div class="card-img">
                       {% if post.images %}
                         <img src="{{ post.images.url }}" alt="{{ post.title }}">
@@ -32,11 +31,15 @@
                     </div>
                     <div class="card-info-box">
                       <h5>{{ post.title }}</h5>
-                      <p class="bold">{{ post.price |intcomma}}원</p>
-                      <p>{{ post.location }}</p>
+                      <p class="bold">{{ post.price |intcomma }}원</p>
+                      {% for user in users %}
+                        {% if user.user_id == post.user_id_id %}
+                          <p>{{ user.region }}</p>
+                        {% endif %}
+                      {% endfor %}
                       <div class="flex-box">
                         <p>조회
-                          {{ post.view_num }}</p>
+                          {{ post.item_views }}</p>
                         <p>·</p>
                         <p>채팅
                           {{ post.chat_num }}</p>

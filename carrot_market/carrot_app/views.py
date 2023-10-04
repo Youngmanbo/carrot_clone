@@ -18,18 +18,21 @@ def main(request):
 def trade(request):
     try:
         item = Item.objects.filter(is_sold=False).order_by('-item_views')
-
+        users = UserProfile.objects.all()
     except:
         item = None
+        users = None
 
     content = {
-        'posts': item
+        'posts': item,
+        'users': users
     }
     
     return render(request, 'carrot_app/trade.html', content)
 
 def trade_post(request, post_id):
     item = Item.objects.get(id=post_id)
+    users = UserProfile.objects.all()
 
     if request.user.is_authenticated:
         if request.user != item.user_id:
@@ -39,13 +42,20 @@ def trade_post(request, post_id):
         item.item_views += 1
         item.save()
 
+    if request.method == "POST":
+        if 'delete' in request.POST:
+            if item:
+                item.delete()
+                return redirect('trade')
+
     content = {
-        'post': item
+        'post': item,
+        'users': users
     }
 
     return render(request, 'carrot_app/trade_post.html', content)
 
-# @login_required
+@login_required
 def write(request):
     try:
         user_profile = UserProfile.objects.get(user = request.user)
@@ -82,7 +92,7 @@ def edit(request, id):
     
     if item:
         item.content = item.content.strip()
-        images = ItemImage.objects.filter(item_id=id)
+        # images = ItemImage.objects.filter(item_id=id)
 
     if request.method == "POST":
         item.title = request.POST['title']
@@ -203,8 +213,23 @@ def set_region_certification(request):
         messages.success(request, "인증되었습니다")
         return redirect('location')
 
-def search():
-    pass
+def search(request):
+    query = request.GET.get('search')
+    
+    if query:
+        results = Item.objects.filter(Q(title__icontains=query))
+        # | Q(title__icontains=query)
+        users = UserProfile.objects.all()
+    else:
+        results = None
+        users = None
+
+    content = {
+        'posts': results,
+        'users': users
+    }
+    
+    return render(request, 'carrot_app/search.html', content)
 
 def region_shop(request):
     form = RegionShopForm()
