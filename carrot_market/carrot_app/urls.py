@@ -25,7 +25,9 @@ urlpatterns = [
     path('chat_index/<int:pk>/', views.chat_room, name='chat_room'),
     path('create_or_join_chat/<int:pk>/', views.create_or_join_chat, name='create_or_join_chat'),
     path('region_registration/', views.region_shop_registration, name='region_registration'),
-    path('region_shop_detail/<int:shop_id>', views.region_shop_detail_view, name='region_shop_detail')
+    path('region_shop_detail/<int:shop_id>', views.region_shop_detail_view, name='region_shop_detail'),
+    # social login
+    path('social_login_view/', views.social_login_view, name='social_login'),
 ]
 
 if settings.DEBUG:
