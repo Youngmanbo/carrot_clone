@@ -25,13 +25,14 @@ class Item(models.Model):
     category            = models.CharField(max_length = 10)
     is_sold             = models.BooleanField(default = False)
     sale_place          = models.CharField(max_length = 30)
+    region              = models.CharField(max_length = 30, default = None)
     
     class Meta:
         pass
 
 class ItemImage(models.Model):
     item_id             = models.ForeignKey(Item, on_delete = models.CASCADE)
-    item_image          = models.ImageField(null = True, blank = True, upload_to = "")
+    item_image          = models.ImageField(null = True, blank = True, upload_to = "images/item")
 
 class ChatRoom(models.Model):
     room_number = models.AutoField(primary_key=True)
