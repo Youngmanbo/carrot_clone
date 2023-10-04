@@ -14,14 +14,13 @@
   <body>
     {% include 'carrot_app/nav.html' %}
     <div class="content-box">
-      {% comment %} <a href="{% url 'carrot_app:write' %}"> {% endcomment %}
-      {% comment %} <a href="{% url 'write' %}"> {% endcomment %}
+      <a href="{% url 'write' %}">
         <div class="floating-button">
           거래글쓰기
         </div>
       </a>
       <div class="about-trade">
-        <div class="container ">
+        <div class="container">
           <div class="trade-text">
             <h3>믿을만한</br>이웃 간 중고거래</h3>
           <p>동네 주민들과 가깝고 따뜻한 거래를</br>지금 경험해보세요.</p>
@@ -51,10 +50,14 @@
                 <div class="card-info-box">
                   <h5>{{ post.title }}</h5>
                   <p class="bold">{{ post.price |intcomma}}원</p>
-                  <p>{{ post.location }}</p>
+                  {% for user in users %}
+                    {% if user.user_id == post.user_id_id %}
+                      <p>{{ user.region }}</p>
+                    {% endif %}
+                  {% endfor %}
                   <div class="flex-box">
                     <p>조회
-                      {{ post.view_num }}</p>
+                      {{ post.item_views }}</p>
                     <p>·</p>
                     <p>채팅
                       {{ post.chat_num }}</p>

@@ -1,4 +1,4 @@
-from django.shortcuts               import render, redirect
+from django.shortcuts               import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http                    import JsonResponse
 from django.contrib.auth.forms      import UserCreationForm
@@ -7,6 +7,7 @@ from django.contrib.auth.models     import User
 from django.contrib.auth            import authenticate
 from django.contrib.auth            import login as custom_login
 from django.shortcuts               import render, redirect
+from django.db.models               import Q
 from .models                        import *
 from .forms                         import *
 
@@ -17,18 +18,21 @@ def main(request):
 def trade(request):
     try:
         item = Item.objects.filter(is_sold=False).order_by('-item_views')
-
+        users = UserProfile.objects.all()
     except:
         item = None
+        users = None
 
     content = {
-        'posts': item
+        'posts': item,
+        'users': users
     }
     
     return render(request, 'carrot_app/trade.html', content)
 
 def trade_post(request, post_id):
     item = Item.objects.get(id=post_id)
+    users = UserProfile.objects.all()
 
     if request.user.is_authenticated:
         if request.user != item.user_id:
@@ -38,13 +42,20 @@ def trade_post(request, post_id):
         item.item_views += 1
         item.save()
 
+    if request.method == "POST":
+        if 'delete' in request.POST:
+            if item:
+                item.delete()
+                return redirect('trade')
+
     content = {
-        'post': item
+        'post': item,
+        'users': users
     }
 
     return render(request, 'carrot_app/trade_post.html', content)
 
-# @login_required
+@login_required
 def write(request):
     try:
         user_profile = UserProfile.objects.get(user = request.user)
@@ -64,9 +75,9 @@ def create_item(request):
         form = ItemPost(request.POST, request.FILES)
         if form.is_valid():
             item = form.save(commit=False)
-            item.user_id = request.username
+            item.user_id = request.user
             item.save()
-            return redirect('trade_post', post_id=item.post_id)
+            return redirect('trade_post', post_id=item.id)
     else:
         form = ItemPost()
     
@@ -81,7 +92,7 @@ def edit(request, id):
     
     if item:
         item.content = item.content.strip()
-        images = ItemImage.objects.filter(item_id=id)
+        # images = ItemImage.objects.filter(item_id=id)
 
     if request.method == "POST":
         item.title = request.POST['title']
@@ -144,7 +155,7 @@ def register(request):
                 # 유저를 로그인 상태로 만듦
                 custom_login(request, user)
             
-                return redirect('carrot_app:login')
+                return redirect('login')
             else:
                 form.add_error('password2', '비밀번호가 일치하지 않습니다.')
     else:
@@ -177,6 +188,7 @@ def location(request):
 def set_region(request):
     if request.method == "POST":
         region = request.POST.get('region-setting')
+        print(region)
 
         if region:
             try:
@@ -184,7 +196,7 @@ def set_region(request):
                 user_profile.region = region
                 user_profile.save()
 
-                return redirect('dangun_app:location')
+                return redirect('location')
             except Exception as e:
                 return JsonResponse({"status": "error", "message": str(e)})
         else:
@@ -199,10 +211,25 @@ def set_region_certification(request):
         request.user.profile.region_certification = 'Y'
         request.user.profile.save()
         messages.success(request, "인증되었습니다")
-        return redirect('dangun_app:location')
+        return redirect('location')
 
-def search():
-    pass
+def search(request):
+    query = request.GET.get('search')
+    
+    if query:
+        results = Item.objects.filter(Q(title__icontains=query))
+        # | Q(title__icontains=query)
+        users = UserProfile.objects.all()
+    else:
+        results = None
+        users = None
+
+    content = {
+        'posts': results,
+        'users': users
+    }
+    
+    return render(request, 'carrot_app/search.html', content)
 
 def region_shop(request):
     queryset = RegionShop.objects.all()
@@ -272,3 +299,68 @@ def region_shop_registration(request):
                'image_set':image_set(instance=RegionShop())
                }
     return render(request, 'carrot_app/region_shop_registration.html', context)
+
+# 채팅테스트
+
+def index(request): 
+    return render(request, 'carrot_app/chat_index.html')
+
+
+# 채팅방 열기
+def chat_room(request, pk):
+    user = request.user
+    chat_room = get_object_or_404(ChatRoom, pk=pk)
+
+    # 내 ID가 포함된 방만 가져오기
+    chat_rooms = ChatRoom.objects.filter(Q(receiver_id=user) | Q(starter_id=user))
+
+    # 각 채팅방의 최신 메시지를 가져오기
+    chat_room_data = []
+    for room in chat_rooms:
+        latest_message = Message.objects.filter(chatroom=room).order_by('-timestamp').first()
+        if latest_message:
+            chat_room_data.append({
+                'chat_room': room,
+                'latest_message': latest_message.content,
+                'timestamp': latest_message.timestamp,
+            })
+
+
+    # post의 상태 확인 및 처리
+    if chat_room.item is None:
+        seller = None
+        item = None
+    else:
+        seller = chat_room.item.user_id
+        item = chat_room.item
+
+    return render(request, 'carrot_app/chat_room.html', {
+        'chat_room': chat_room,
+        'chat_room_data': chat_room_data,
+        'room_name': chat_room.pk,
+        'seller': seller,
+        'item': item,
+    })
+
+
+# 채팅방 생성 또는 참여
+def create_or_join_chat(request, pk):
+    item = get_object_or_404(Item, pk=pk)
+    user = request.user
+    chat_room = None
+    created = False
+
+    # 채팅방이 이미 존재하는지 확인
+    chat_rooms = ChatRoom.objects.filter(
+        Q(starter=user, receiver=item.user_id, item=item) |
+        Q(starter=item.user_id, receiver=user, item=item)
+    )
+    if chat_rooms.exists():
+        chat_room = chat_rooms.first()
+    else:
+        # 채팅방이 존재하지 않는 경우, 새로운 채팅방 생성
+        chat_room = ChatRoom(starter=user, receiver=item.user_id, item=item)
+        chat_room.save()
+        created = True
+
+    return JsonResponse({'success': True, 'chat_room_id': chat_room.pk, 'created': created})
