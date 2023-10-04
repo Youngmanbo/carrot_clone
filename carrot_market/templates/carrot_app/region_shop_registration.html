@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'css/cyberpunk.css' %}">
     <link rel="stylesheet" href="{% static 'css/region_register.css' %}">
+    <link rel="stylesheet" href="{% static 'css/cyberpunk.css' %}">
     <title>Document</title>
 </head>
 <body>
@@ -21,7 +21,13 @@
             <h2 class='cyberpunk glitched'>가게 정보 : </h2>
             {{form.shopinfo}}
             <h2 class='cyberpunk glitched'>카테고리 : </h2>
-            {{form.category}}
+            {% for radio in form.category %}
+                {% if forloop.counter >= 2 %}
+                    <div class="radio-container">
+                    {{radio}}
+                    </div>
+                {% endif %}
+            {% endfor %}
             {{ formset.management_form }}
             <div class="product-form" id='product-form-container'>
                 {% for product_form in formset.forms %}

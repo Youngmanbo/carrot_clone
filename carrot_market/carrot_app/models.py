@@ -92,7 +92,7 @@ class RegionShop(models.Model):
     shopinfo              = models.TextField()
     thumnail              = models.ImageField(upload_to=image_upload_to, height_field=None, width_field=None, null=True, blank=True)
     neighborhood          = models.CharField(max_length=50, blank=True, null=True)
-    category              = models.CharField(max_length=50, choices=CATEGORY_CHOICE)
+    category              = models.CharField(max_length=50, choices=CATEGORY_CHOICE, blank=True)
     
 @receiver(pre_save, sender=RegionShop)
 def extract_neighborhood(sender, instance, **kwargs):
