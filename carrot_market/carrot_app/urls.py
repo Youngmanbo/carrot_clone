@@ -20,6 +20,7 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('search/', views.search, name='search'),
     path('regionshop/', views.region_shop, name='region_shop'),
+    path('regionshop/<str:category>', views.region_shop, name='region_shop_category'),
     path("chat_index", views.index, name='index'),  
     path('chat_index/<int:pk>/', views.chat_room, name='chat_room'),
     path('create_or_join_chat/<int:pk>/', views.create_or_join_chat, name='create_or_join_chat'),
