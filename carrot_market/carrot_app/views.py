@@ -238,8 +238,12 @@ def search(request):
     
     return render(request, 'carrot_app/search.html', content)
 
-def region_shop(request):
-    queryset = RegionShop.objects.all()
+def region_shop(request, category=None):
+    
+    if category:
+        queryset = RegionShop.objects.filter(category=category)
+    else:
+        queryset = RegionShop.objects.all()
     context = {'data':queryset}
     
     return render(request, 'carrot_app/region_shop.html', context)
@@ -259,24 +263,16 @@ def region_shop_registration(request):
     product_formset = inlineformset_factory(
         RegionShop,
         RegionShopProductPrice,
-        fields = (
-            'product_name',
-            'product_price',
-            'option'
-        ),
+        form=StyledProductForm,
         extra=2,
-        can_delete=True,
     )
     
     # 레기온 이미지모델 폼셋 
     image_set = inlineformset_factory(
         RegionShop,
         RegionShopImages,
-        fields = (
-            'image',
-        ),
+        form=StyledImageForm,
         extra=2,
-        can_delete=True
     )
     
     if request.method == "POST":
@@ -371,3 +367,7 @@ def create_or_join_chat(request, pk):
         created = True
 
     return JsonResponse({'success': True, 'chat_room_id': chat_room.pk, 'created': created})
+
+# social login
+def social_login_view(request):
+    return render(request, 'registration/login.html')

@@ -103,14 +103,16 @@ body{
     height: 80px;
 }
 .post-list {
-    max-width: 800px;
+    justify-content: flex-start;
+    max-width: 670px;
     box-sizing: border-box;
     gap: 10px;
 }
 
+
 .list-content-item-name-wraper{
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
     gap: 5px;
 }
@@ -133,6 +135,10 @@ li {
 }
 .list-item-wraper {
     display: flex;
+    margin-left:5px;
+    justify-content: flex-start;
+    align-items: center;
+
 }
 
 /* 카테고리 버튼 스타일*/
@@ -149,4 +155,11 @@ li {
     border-radius: 17px;
     margin-left:5px;
     border-color:cadetblue;
+}
+
+/* 말 줄임 */
+.word {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
