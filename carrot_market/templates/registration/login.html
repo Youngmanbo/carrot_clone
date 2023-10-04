@@ -1,4 +1,5 @@
 {% load static %}
+{% load socialaccount%}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -25,6 +26,14 @@
             {{ form.as_p }}
             <button type="submit" class="login-button">로그인</button>
           </form>
+          <div class='social_login'>
+            <a class="social_btn" href="{% url 'social:begin' 'google-oauth2' %}">
+                <span class="google_span">구글 로그인</span>
+            </a>
+            <a class="social_btn" href="{% url 'social:begin' 'naver' %}">
+                <span class="naver_span">네이버 로그인</span>
+            </a>
+        </div>
           <p class="register-reco">
             당근마켓 회원이 아니신가요?
             <a href="{% url 'register' %}" class="bold">회원가입</a>

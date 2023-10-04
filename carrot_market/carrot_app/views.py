@@ -364,3 +364,7 @@ def create_or_join_chat(request, pk):
         created = True
 
     return JsonResponse({'success': True, 'chat_room_id': chat_room.pk, 'created': created})
+
+# social login
+def social_login_view(request):
+    return render(request, 'registration/login.html')
