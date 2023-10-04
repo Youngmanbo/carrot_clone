@@ -264,7 +264,7 @@ def region_shop_registration(request):
         RegionShop,
         RegionShopProductPrice,
         form=StyledProductForm,
-        extra=2,
+        extra=1,
     )
     
     # 레기온 이미지모델 폼셋 
@@ -272,7 +272,7 @@ def region_shop_registration(request):
         RegionShop,
         RegionShopImages,
         form=StyledImageForm,
-        extra=2,
+        extra=1,
     )
     
     if request.method == "POST":
