@@ -42,9 +42,9 @@
             <div class="card-box">
               <a href="{% url 'trade_post' post.pk %}" class="trade-text-link">
                 <div class="card-img">
-                  {% if post.images %}
-                    <img src="{{ post.images.url }}" alt="{{ post.title }}">
-                  {% endif %}
+                  {% for photo in post.itemimage_set.all %}{% if forloop.first %}
+                      <img src="{{ photo.item_image.url }}" alt="{{ post.title }}" class="block-box">
+                  {% endif %}{% endfor %}
                 </div>
                 <div class="card-info-box">
                   <h5>{{ post.title }}</h5>

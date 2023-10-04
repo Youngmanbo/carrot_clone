@@ -32,7 +32,7 @@ class Item(models.Model):
 
 class ItemImage(models.Model):
     item_id             = models.ForeignKey(Item, on_delete = models.CASCADE)
-    item_image          = models.ImageField(null = True, blank = True, upload_to = "")
+    item_image          = models.ImageField(null = True, blank = True, upload_to = "images/item")
 
 class ChatRoom(models.Model):
     room_number = models.AutoField(primary_key=True)

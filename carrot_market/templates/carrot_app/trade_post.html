@@ -21,7 +21,14 @@
       <div class="container column">
         <div class="post-box">
           {% block content %}
-            <img src="{{ post.images.url }}" alt="{{ post.title }}" class="block-box">
+            {% if post.itemimage_set.all %}
+              {% for photo in post.itemimage_set.all %}
+                  <img src="{{ photo.item_image.url }}" alt="{{ post.title }}" class="block-box">
+              {% endfor %}
+            {% else %}
+              <img src="{{ post.images.url }}" alt="{{ post.title }}" class="block-box">
+            {% endif %}
+
             <div class="flex-box between info-button-box">
               <div class="user-info">
                 <h6>{{ post.user_id }}</h6>

@@ -74,6 +74,11 @@ def create_item(request):
             item.user_id = request.user
             item.region = user_profile.region
             item.save()
+            for img in request.FILES.getlist('item_image'):
+                photo = ItemImage()
+                photo.item_id_id = item.id
+                photo.item_image = img
+                photo.save()
             return redirect('trade_post', post_id=item.id)
     else:
         form = ItemPost()
@@ -89,21 +94,22 @@ def edit(request, id):
     
     if item:
         item.content = item.content.strip()
-        # images = ItemImage.objects.filter(item_id=id)
 
     if request.method == "POST":
         item.title = request.POST['title']
         item.price = request.POST['price']
         item.content = request.POST['content']
         item.sale_place = request.POST['sale_place']
-        # if 'item_image' in request.FILES:
-        #     images.item_image = request.FILES['item_image']
         item.save()
+        for img in request.FILES.getlist('item_image'):
+            photo = ItemImage()
+            photo.item_id_id = item.id
+            photo.item_image = img
+            photo.save()
         return redirect('trade_post', post_id=id)
     
     content = {
-        'post': item,
-        # 'item_image': images.item_image
+        'post': item
     }
     return render(request, 'carrot_app/write.html', content)
 
