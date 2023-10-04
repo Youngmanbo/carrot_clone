@@ -13,7 +13,15 @@ from .forms                         import *
 
 # Create your views here.
 def main(request):
-    return render(request, 'carrot_app/main.html')
+    try:
+        item = Item.objects.filter(is_sold=False).order_by('-item_views')
+    except:
+        item = None
+
+    content = {
+        'posts': item,
+    }
+    return render(request, 'carrot_app/main.html', content)
 
 def trade(request):
     try:
@@ -174,7 +182,7 @@ def chat(request):
 @login_required
 def logout(request):
     auth.logout(request)
-    return render(request, 'carrot_app/main.html')
+    return redirect('main')
 
     
 @login_required
