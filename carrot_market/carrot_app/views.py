@@ -232,25 +232,73 @@ def search(request):
     return render(request, 'carrot_app/search.html', content)
 
 def region_shop(request):
-    form = RegionShopForm()
-    return render(request, 'carrot_app/region_shop.html', {'form':form})
+    queryset = RegionShop.objects.all()
+    context = {'data':queryset}
+    
+    return render(request, 'carrot_app/region_shop.html', context)
+
+def region_shop_detail_view(request, shop_id):
+    if request.method == 'GET':
+        data = RegionShop.objects.get(id=shop_id)
+        context = {'data':data}
+    return render(request, 'carrot_app/region_shop_detail.html', context)
 
 def region_shop_registration(request):
+    
+    # 레기온 샾 기본 폼
     f = RegionShopForm()
-    form_set = inlineformset_factory(
-    RegionShop,
-    RegionShopProductPrice,
-    fields = (
-        'product_name',
-        'product_price',
-        'option'
-    ),
-    extra=2,
-    can_delete=True,
+    
+    # 래기온 프로덕트 프라이스 모델폼셋
+    product_formset = inlineformset_factory(
+        RegionShop,
+        RegionShopProductPrice,
+        fields = (
+            'product_name',
+            'product_price',
+            'option'
+        ),
+        extra=2,
+        can_delete=True,
     )
-    context = {'formset':form_set(instance=RegionShop())}
+    
+    # 레기온 이미지모델 폼셋 
+    image_set = inlineformset_factory(
+        RegionShop,
+        RegionShopImages,
+        fields = (
+            'image',
+        ),
+        extra=2,
+        can_delete=True
+    )
+    
+    if request.method == "POST":
+        form = RegionShopForm(request.POST, request.FILES)
+        product_formset = product_formset(request.POST, instance=RegionShop())
+        image_set = image_set(request.POST, request.FILES, instance=RegionShop())
+        
+        if form.is_valid() and product_formset.is_valid() and image_set.is_valid():
+            region = form.save()
+            p_instance = product_formset.save(commit=False)
+            image_instance = image_set.save(commit=False)
+            
+            for instance in p_instance:
+                instance.region_shop_id = region
+                instance.save()
+            
+            for instance in image_instance:
+                instance.shop_id = region
+                instance.save()
+            
+            return redirect('main')
+        else:
+            return redirect('region_registration')
+    
+    context = {'formset':product_formset(instance=RegionShop()),
+               'form':f, 
+               'image_set':image_set(instance=RegionShop())
+               }
     return render(request, 'carrot_app/region_shop_registration.html', context)
-
 
 # 채팅테스트
 
@@ -316,4 +364,3 @@ def create_or_join_chat(request, pk):
         created = True
 
     return JsonResponse({'success': True, 'chat_room_id': chat_room.pk, 'created': created})
-

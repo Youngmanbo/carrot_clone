@@ -1,11 +1,86 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/reset.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/global.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/nav.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/footer.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/region_shop.css' %}"/>
 </head>
 <body>
-    {{form.as_p}}
+    {% include 'carrot_app/nav.html' %}
+    <div class="content-box">
+        <div class="about-region-shop">
+            <div class="container ">
+                <div class="trade-text">
+                    <h1>동네 이웃들이</br>자주 가는 동네 가게</h1>
+                    <p>우리 동네 사람들이</br>이용하는 가게를 찾아보세요.</p>
+                </div>
+                <div class="thumbnail-img">
+                    <img src="{% static 'img/carrot_region_shop.png' %}" alt=""/>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="region-box content-box">
+        <div class="post-text">
+            <h1>다양한 동네가게를 볼 수 있어요</h1>
+        </div>
+        <div class="category">
+            <a href="">
+                <button class="category-btn" value='전체'>전체</button>
+            </a>
+            <a href="">
+                <button class="category-btn" value='식당'>식당</button>
+            </a>
+            <a href="">
+                <button class="category-btn" value='카페'>카페</button>
+            </a>
+            <a href="">
+                <button class="category-btn" value='용달/이사'>용달/이사</button>
+            </a>
+            <a href="">
+                <button class="category-btn" value='뷰티/미용'>뷰티/미용</button>
+            </a>
+            <a href="">
+                <button class="category-btn" value='헬스/필라테스/요가'>헬스/필라테스/요가</button>
+            </a>
+        </div>
+        <div class="post-box">
+            <ul class="post-list flex-wrap">
+                {% for item in data %}
+                    <li class="list-item">
+                        <a href="{% url 'region_shop_detail' shop_id=item.id %}">
+                            <div class='flex-wrap list-item-wraper'>
+                                <div class="thumnail">
+                                    {% if item.thumnail %}
+                                        <img src="{{item.thumnail.url}}" alt="">
+                                    {% else %}
+                                        <p>이미지가 없습니다.</p>
+                                    {% endif %}
+                                </div>
+                                <div class="list-content">
+                                    <div class="list-content-item-name-wraper">
+                                        <div class="list-content-item-name">
+                                            {{item.shopname}}
+                                        </div>
+                                        <div class="list-content-item-region">
+                                            {{item.neighborhood}}
+                                        </div>
+                                    </div>
+                                    <div class="list-content-item-description">
+                                        {{item.shopinfo}}
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                {% endfor %}
+        </div>
+    </div>
+    {% include 'carrot_app/footer.html' %}
 </body>
 </html>
