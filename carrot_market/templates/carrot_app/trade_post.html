@@ -9,7 +9,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/reset.css' %}"/>
     <link rel="stylesheet" type="text/css" href="{% static 'css/global.css' %}"/>
     <link rel="stylesheet" type="text/css" href="{% static 'css/trade_post.css' %}?{% now "U" %}"/>
-    <link rel="stylesheet" type="text/css" href="{% static 'css/nav.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/nav.css' %}?{% now "U" %}"/>
     <link rel="stylesheet" type="text/css" href="{% static 'css/footer.css' %}"/>
     <link rel="shortcut icon" type="image/x-icon" href="{% static 'dangun_app/favicon.ico' %}" />
     <title>중고거래 상세보기</title>
@@ -21,24 +21,39 @@
       <div class="container column">
         <div class="post-box">
           {% block content %}
-            <img src="{{ post.images.url }}" alt="{{ post.title }}" class="block-box">
+          <div class="slide-box">
+            {% if post.itemimage_set.all %}
+              {% for photo in post.itemimage_set.all %}
+                  <img src="{{ photo.item_image.url }}" alt="{{ post.title }}" class="block-box">
+              {% endfor %}
+            {% else %}
+              <img src="{{ post.images.url }}" alt="{{ post.title }}" class="block-box">
+            {% endif %}
+          </div>
             <div class="flex-box between info-button-box">
               <div class="user-info">
                 <h6>{{ post.user_id }}</h6>
-                {% for user in users %}
-                  {% if user.user_id == post.user_id_id %}
-                    <p>{{ user.region }}</p>
-                  {% endif %}
-                {% endfor %}
+                <p>{{ post.region }}</p>
               </div>
               {% if request.user.id == post.user_id_id %}
                 <div class="flex-box button-box">
 
-                  <form method="POST">
-                    {% csrf_token %}
-                    <input type="hidden" name="delete">
-                    <button type="submit" class="orange">삭제하기</button>
-                  </form>
+                  <button id="del-btn" class="orange">삭제하기</button>
+
+                  <!-- 삭제 모달 -->
+                  <div class="black-bg noshow">
+                    <div class="white-bg">
+                      <div>진짭니까?</div>
+                      <div class="modal-btn">
+                        <form method="POST">
+                          {% csrf_token %}
+                          <input type="hidden" name="delete">
+                          <button type="submit" class="orange">삭제하기</button>
+                        </form>
+                        <button id="close" class="grey">네? 싫어요;;</button>
+                      </div>
+                    </div>
+                  </div>
 
                   <a href="{% url 'edit' post.id %}">
                     <button class="grey">수정하기</button>
@@ -75,5 +90,24 @@
     {% include 'carrot_app/footer.html' %}
 
   </body>
+  <script>
+    
+    document.querySelector('#del-btn').addEventListener('click',function(){
+      document.querySelector('.black-bg').classList.remove('noshow');
+      document.querySelector('.black-bg').classList.add('modal-open');
+    })
+
+    document.querySelector('#close').addEventListener('click',function(){
+      document.querySelector('.black-bg').classList.add('noshow');
+    })
+    
+    document.querySelector('.black-bg').addEventListener("click", function(e){
+      const evTarget = e.target
+      if(evTarget.classList.contains("modal-open")) {
+        document.querySelector('.black-bg').classList.add('noshow');
+      }
+  })
+
+  </script>
 
 </html>
