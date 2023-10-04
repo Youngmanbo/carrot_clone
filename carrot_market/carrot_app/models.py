@@ -77,6 +77,7 @@ def image_upload_to(instance, filename):
     return f"images/thumbnail/{filename}"
 
 class RegionShop(models.Model):
+    # category 테이블  라디오버튼 처리
     CATEGORY_CHOICE = [
         ('all', '전체'),
         ('restaurant', '식당'),

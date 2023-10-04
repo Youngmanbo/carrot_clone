@@ -30,22 +30,22 @@
             <h1>다양한 동네가게를 볼 수 있어요</h1>
         </div>
         <div class="category">
-            <a href="">
+            <a href="{% url "region_shop_category" category='all' %}">
                 <button class="category-btn" value='전체'>전체</button>
             </a>
-            <a href="">
+            <a href="{% url "region_shop_category" category='restaurant' %}">
                 <button class="category-btn" value='식당'>식당</button>
             </a>
-            <a href="">
+            <a href="{% url "region_shop_category" category='cafe' %}">
                 <button class="category-btn" value='카페'>카페</button>
             </a>
-            <a href="">
+            <a href="{% url "region_shop_category" category='move' %}">
                 <button class="category-btn" value='용달/이사'>용달/이사</button>
             </a>
-            <a href="">
+            <a href="{% url "region_shop_category" category='beuaty' %}">
                 <button class="category-btn" value='뷰티/미용'>뷰티/미용</button>
             </a>
-            <a href="">
+            <a href="{% url "region_shop_category" category='health' %}">
                 <button class="category-btn" value='헬스/필라테스/요가'>헬스/필라테스/요가</button>
             </a>
         </div>

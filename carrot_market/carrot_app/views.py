@@ -231,8 +231,12 @@ def search(request):
     
     return render(request, 'carrot_app/search.html', content)
 
-def region_shop(request):
-    queryset = RegionShop.objects.all()
+def region_shop(request, category=None):
+    
+    if category:
+        queryset = RegionShop.objects.filter(category=category)
+    else:
+        queryset = RegionShop.objects.all()
     context = {'data':queryset}
     
     return render(request, 'carrot_app/region_shop.html', context)
@@ -252,11 +256,7 @@ def region_shop_registration(request):
     product_formset = inlineformset_factory(
         RegionShop,
         RegionShopProductPrice,
-        fields = (
-            'product_name',
-            'product_price',
-            'option'
-        ),
+        form=StyledProductForm,
         extra=2,
         can_delete=True,
     )
@@ -265,9 +265,7 @@ def region_shop_registration(request):
     image_set = inlineformset_factory(
         RegionShop,
         RegionShopImages,
-        fields = (
-            'image',
-        ),
+        form=StyledImageForm,
         extra=2,
         can_delete=True
     )
