@@ -1,6 +1,7 @@
 from django                 import forms
 from django.forms           import ModelForm, inlineformset_factory
 from . models               import RegionShop, RegionShopImages, RegionShopProductPrice, Item
+from django.forms import modelformset_factory
 # from .models import Post
 
 class CustomLoginForm(forms.Form):
@@ -41,3 +42,5 @@ class RegionShopForm(ModelForm):
     class Meta:
         model = RegionShop
         fields =  '__all__'
+
+
