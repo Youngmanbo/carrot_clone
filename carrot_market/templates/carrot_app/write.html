@@ -29,9 +29,11 @@
                   <label class="img-upload">
                     {% if post %}
                       {% if post.itemimage_set.all %}
-                      {% for photo in post.itemimage_set.all %}
-                        <img src="{{ photo.item_image.url }}" alt="이미지 설명" id="imagePreview">
-                      {% endfor %}
+                      <div class="slide-box">
+                        {% for photo in post.itemimage_set.all %}
+                          <img src="{{ photo.item_image.url }}" alt="이미지 설명" class="block-box" id="imagePreview">
+                        {% endfor %}
+                      </div>
                       {% else %}
                         <img src="{% static 'img/icon_photo.png' %}" alt="이미지 설명" id="imagePreview">
                       {% endif %}
