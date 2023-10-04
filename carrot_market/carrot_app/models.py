@@ -25,13 +25,14 @@ class Item(models.Model):
     category            = models.CharField(max_length = 10)
     is_sold             = models.BooleanField(default = False)
     sale_place          = models.CharField(max_length = 30)
+    region              = models.CharField(max_length = 30, default = None)
     
     class Meta:
         pass
 
 class ItemImage(models.Model):
     item_id             = models.ForeignKey(Item, on_delete = models.CASCADE)
-    item_image          = models.ImageField(null = True, blank = True, upload_to = "")
+    item_image          = models.ImageField(null = True, blank = True, upload_to = "images/item")
 
 class ChatRoom(models.Model):
     room_number = models.AutoField(primary_key=True)
@@ -77,11 +78,21 @@ def image_upload_to(instance, filename):
     return f"images/thumbnail/{filename}"
 
 class RegionShop(models.Model):
+    # category 테이블  라디오버튼 처리
+    CATEGORY_CHOICE = [
+        ('all', '전체'),
+        ('restaurant', '식당'),
+        ('cafe', '카페'),
+        ('move', '이사/용달'),
+        ('beauty', '뷰티/미용'),
+        ('health', '헬스/필라테스/요가')
+    ]
     shopname              = models.CharField(max_length=50)
     address               = models.CharField(max_length=200, null=True)
-    shopinfo              = models.CharField(max_length=200)
+    shopinfo              = models.TextField()
     thumnail              = models.ImageField(upload_to=image_upload_to, height_field=None, width_field=None, null=True)
     neighborhood          = models.CharField(max_length=50, blank=True, null=True)
+    category              = models.CharField(max_length=50, choices=CATEGORY_CHOICE)
     
 @receiver(pre_save, sender=RegionShop)
 def extract_neighborhood(sender, instance, **kwargs):

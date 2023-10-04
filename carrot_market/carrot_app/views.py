@@ -13,26 +13,30 @@ from .forms                         import *
 
 # Create your views here.
 def main(request):
-    return render(request, 'carrot_app/main.html')
+    try:
+        item = Item.objects.filter(is_sold=False).order_by('-item_views')
+    except:
+        item = None
+
+    content = {
+        'posts': item,
+    }
+    return render(request, 'carrot_app/main.html', content)
 
 def trade(request):
     try:
         item = Item.objects.filter(is_sold=False).order_by('-item_views')
-        users = UserProfile.objects.all()
     except:
         item = None
-        users = None
 
     content = {
         'posts': item,
-        'users': users
     }
     
     return render(request, 'carrot_app/trade.html', content)
 
 def trade_post(request, post_id):
     item = Item.objects.get(id=post_id)
-    users = UserProfile.objects.all()
 
     if request.user.is_authenticated:
         if request.user != item.user_id:
@@ -49,8 +53,7 @@ def trade_post(request, post_id):
                 return redirect('trade')
 
     content = {
-        'post': item,
-        'users': users
+        'post': item
     }
 
     return render(request, 'carrot_app/trade_post.html', content)
@@ -71,12 +74,19 @@ def write(request):
         return redirect('location')
 
 def create_item(request):
+    user_profile = UserProfile.objects.get(user = request.user)
     if request.method == 'POST':
         form = ItemPost(request.POST, request.FILES)
         if form.is_valid():
             item = form.save(commit=False)
             item.user_id = request.user
+            item.region = user_profile.region
             item.save()
+            for img in request.FILES.getlist('item_image'):
+                photo = ItemImage()
+                photo.item_id_id = item.id
+                photo.item_image = img
+                photo.save()
             return redirect('trade_post', post_id=item.id)
     else:
         form = ItemPost()
@@ -92,21 +102,22 @@ def edit(request, id):
     
     if item:
         item.content = item.content.strip()
-        # images = ItemImage.objects.filter(item_id=id)
 
     if request.method == "POST":
         item.title = request.POST['title']
         item.price = request.POST['price']
         item.content = request.POST['content']
         item.sale_place = request.POST['sale_place']
-        # if 'item_image' in request.FILES:
-        #     images.item_image = request.FILES['item_image']
         item.save()
+        for img in request.FILES.getlist('item_image'):
+            photo = ItemImage()
+            photo.item_id_id = item.id
+            photo.item_image = img
+            photo.save()
         return redirect('trade_post', post_id=id)
     
     content = {
-        'post': item,
-        # 'item_image': images.item_image
+        'post': item
     }
     return render(request, 'carrot_app/write.html', content)
 
@@ -171,7 +182,7 @@ def chat(request):
 @login_required
 def logout(request):
     auth.logout(request)
-    return render(request, 'carrot_app/main.html')
+    return redirect('main')
 
     
 @login_required
@@ -217,22 +228,22 @@ def search(request):
     query = request.GET.get('search')
     
     if query:
-        results = Item.objects.filter(Q(title__icontains=query))
-        # | Q(title__icontains=query)
-        users = UserProfile.objects.all()
+        results = Item.objects.filter(Q(title__icontains=query) | Q(region__icontains=query))
     else:
         results = None
-        users = None
 
     content = {
-        'posts': results,
-        'users': users
+        'posts': results
     }
     
     return render(request, 'carrot_app/search.html', content)
 
-def region_shop(request):
-    queryset = RegionShop.objects.all()
+def region_shop(request, category=None):
+    
+    if category:
+        queryset = RegionShop.objects.filter(category=category)
+    else:
+        queryset = RegionShop.objects.all()
     context = {'data':queryset}
     
     return render(request, 'carrot_app/region_shop.html', context)
@@ -252,24 +263,16 @@ def region_shop_registration(request):
     product_formset = inlineformset_factory(
         RegionShop,
         RegionShopProductPrice,
-        fields = (
-            'product_name',
-            'product_price',
-            'option'
-        ),
+        form=StyledProductForm,
         extra=2,
-        can_delete=True,
     )
     
     # 레기온 이미지모델 폼셋 
     image_set = inlineformset_factory(
         RegionShop,
         RegionShopImages,
-        fields = (
-            'image',
-        ),
+        form=StyledImageForm,
         extra=2,
-        can_delete=True
     )
     
     if request.method == "POST":
@@ -364,3 +367,7 @@ def create_or_join_chat(request, pk):
         created = True
 
     return JsonResponse({'success': True, 'chat_room_id': chat_room.pk, 'created': created})
+
+# social login
+def social_login_view(request):
+    return render(request, 'registration/login.html')
