@@ -18,21 +18,17 @@ def main(request):
 def trade(request):
     try:
         item = Item.objects.filter(is_sold=False).order_by('-item_views')
-        users = UserProfile.objects.all()
     except:
         item = None
-        users = None
 
     content = {
         'posts': item,
-        'users': users
     }
     
     return render(request, 'carrot_app/trade.html', content)
 
 def trade_post(request, post_id):
     item = Item.objects.get(id=post_id)
-    users = UserProfile.objects.all()
 
     if request.user.is_authenticated:
         if request.user != item.user_id:
@@ -49,8 +45,7 @@ def trade_post(request, post_id):
                 return redirect('trade')
 
     content = {
-        'post': item,
-        'users': users
+        'post': item
     }
 
     return render(request, 'carrot_app/trade_post.html', content)
@@ -71,11 +66,13 @@ def write(request):
         return redirect('location')
 
 def create_item(request):
+    user_profile = UserProfile.objects.get(user = request.user)
     if request.method == 'POST':
         form = ItemPost(request.POST, request.FILES)
         if form.is_valid():
             item = form.save(commit=False)
             item.user_id = request.user
+            item.region = user_profile.region
             item.save()
             return redirect('trade_post', post_id=item.id)
     else:
@@ -217,16 +214,12 @@ def search(request):
     query = request.GET.get('search')
     
     if query:
-        results = Item.objects.filter(Q(title__icontains=query))
-        # | Q(title__icontains=query)
-        users = UserProfile.objects.all()
+        results = Item.objects.filter(Q(title__icontains=query) | Q(region__icontains=query))
     else:
         results = None
-        users = None
 
     content = {
-        'posts': results,
-        'users': users
+        'posts': results
     }
     
     return render(request, 'carrot_app/search.html', content)

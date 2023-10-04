@@ -25,11 +25,7 @@
             <div class="flex-box between info-button-box">
               <div class="user-info">
                 <h6>{{ post.user_id }}</h6>
-                {% for user in users %}
-                  {% if user.user_id == post.user_id_id %}
-                    <p>{{ user.region }}</p>
-                  {% endif %}
-                {% endfor %}
+                <p>{{ post.region }}</p>
               </div>
               {% if request.user.id == post.user_id_id %}
                 <div class="flex-box button-box">
