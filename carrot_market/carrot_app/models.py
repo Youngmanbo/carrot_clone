@@ -77,11 +77,20 @@ def image_upload_to(instance, filename):
     return f"images/thumbnail/{filename}"
 
 class RegionShop(models.Model):
+    CATEGORY_CHOICE = [
+        ('all', '전체'),
+        ('restaurant', '식당'),
+        ('cafe', '카페'),
+        ('move', '이사/용달'),
+        ('beauty', '뷰티/미용'),
+        ('health', '헬스/필라테스/요가')
+    ]
     shopname              = models.CharField(max_length=50)
     address               = models.CharField(max_length=200, null=True)
-    shopinfo              = models.CharField(max_length=200)
+    shopinfo              = models.TextField()
     thumnail              = models.ImageField(upload_to=image_upload_to, height_field=None, width_field=None, null=True)
     neighborhood          = models.CharField(max_length=50, blank=True, null=True)
+    category              = models.CharField(max_length=50, choices=CATEGORY_CHOICE)
     
 @receiver(pre_save, sender=RegionShop)
 def extract_neighborhood(sender, instance, **kwargs):

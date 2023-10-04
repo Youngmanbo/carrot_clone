@@ -50,11 +50,11 @@
             </a>
         </div>
         <div class="post-box">
-            <ul class="post-list flex-wrap">
+            <ul class="flex-wrap post-list">
                 {% for item in data %}
                     <li class="list-item">
                         <a href="{% url 'region_shop_detail' shop_id=item.id %}">
-                            <div class='flex-wrap list-item-wraper'>
+                            <div class='list-item-wraper'>
                                 <div class="thumnail">
                                     {% if item.thumnail %}
                                         <img src="{{item.thumnail.url}}" alt="">
@@ -71,7 +71,7 @@
                                             {{item.neighborhood}}
                                         </div>
                                     </div>
-                                    <div class="list-content-item-description">
+                                    <div class="list-content-item-description word">
                                         {{item.shopinfo}}
                                     </div>
                                 </div>

@@ -42,5 +42,7 @@ class RegionShopForm(ModelForm):
     class Meta:
         model = RegionShop
         fields =  '__all__'
-
+        widgets = {
+            'category': forms.RadioSelect(choices=RegionShop.CATEGORY_CHOICE),
+        }
 
