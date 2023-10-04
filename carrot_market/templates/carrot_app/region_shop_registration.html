@@ -22,7 +22,9 @@
             {{form.shopinfo}}
             <h2 class='cyberpunk glitched'>카테고리 : </h2>
             {{form.category}}
-            {% for product_form in formset %}
+            {% comment %} {{formset.as_p}}
+            {{image_set.as_p}} {% endcomment %}
+            {% for product_form in formset.forms %}
                 <h2 class='cyberpunk glitched'>상품이름 : </h2>
                 {{product_form.product_name}}
                 <h2 class='cyberpunk glitched'>상품가격 : </h2>
@@ -30,10 +32,12 @@
                 <h2 class='cyberpunk glitched'>옵션 : </h2>
                 {{product_form.option}}
             {% endfor %}
+            {{ formset.management_form }}
             {% for image_form in image_set %}
                 <h2 class='cyberpunk glitched'>이미지등록 : </h2>
                 {{image_form.image}}
             {% endfor %}
+            {{ image_set.management_form }}
             <button class='cyberpunk2077 red' type="submit">제출</button>
         </form>
     </div>

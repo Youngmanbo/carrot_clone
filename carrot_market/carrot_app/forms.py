@@ -62,7 +62,7 @@ class StyledProductForm(forms.ModelForm):
         model = RegionShopProductPrice
         fields = ('product_name', 'product_price', 'option')
         labels = {
-        'product_name': '<h2>상품이름 : </h2>',
+        'product_name':  'hellow',
         'product_price': '<h2>상품가격 : </h2>',
         'option': '<h2>옵션 : </h2>',
         }
