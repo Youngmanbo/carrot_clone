@@ -18,18 +18,21 @@ def main(request):
 def trade(request):
     try:
         item = Item.objects.filter(is_sold=False).order_by('-item_views')
-
+        users = UserProfile.objects.all()
     except:
         item = None
+        users = None
 
     content = {
-        'posts': item
+        'posts': item,
+        'users': users
     }
     
     return render(request, 'carrot_app/trade.html', content)
 
 def trade_post(request, post_id):
     item = Item.objects.get(id=post_id)
+    users = UserProfile.objects.all()
 
     if request.user.is_authenticated:
         if request.user != item.user_id:
@@ -39,13 +42,20 @@ def trade_post(request, post_id):
         item.item_views += 1
         item.save()
 
+    if request.method == "POST":
+        if 'delete' in request.POST:
+            if item:
+                item.delete()
+                return redirect('trade')
+
     content = {
-        'post': item
+        'post': item,
+        'users': users
     }
 
     return render(request, 'carrot_app/trade_post.html', content)
 
-# @login_required
+@login_required
 def write(request):
     try:
         user_profile = UserProfile.objects.get(user = request.user)
@@ -65,9 +75,9 @@ def create_item(request):
         form = ItemPost(request.POST, request.FILES)
         if form.is_valid():
             item = form.save(commit=False)
-            item.user_id = request.username
+            item.user_id = request.user
             item.save()
-            return redirect('trade_post', post_id=item.post_id)
+            return redirect('trade_post', post_id=item.id)
     else:
         form = ItemPost()
     
@@ -82,7 +92,7 @@ def edit(request, id):
     
     if item:
         item.content = item.content.strip()
-        images = ItemImage.objects.filter(item_id=id)
+        # images = ItemImage.objects.filter(item_id=id)
 
     if request.method == "POST":
         item.title = request.POST['title']
@@ -178,6 +188,7 @@ def location(request):
 def set_region(request):
     if request.method == "POST":
         region = request.POST.get('region-setting')
+        print(region)
 
         if region:
             try:
@@ -185,7 +196,7 @@ def set_region(request):
                 user_profile.region = region
                 user_profile.save()
 
-                return redirect('dangun_app:location')
+                return redirect('location')
             except Exception as e:
                 return JsonResponse({"status": "error", "message": str(e)})
         else:
@@ -200,30 +211,94 @@ def set_region_certification(request):
         request.user.profile.region_certification = 'Y'
         request.user.profile.save()
         messages.success(request, "인증되었습니다")
-        return redirect('dangun_app:location')
+        return redirect('location')
 
-def search():
-    pass
+def search(request):
+    query = request.GET.get('search')
+    
+    if query:
+        results = Item.objects.filter(Q(title__icontains=query))
+        # | Q(title__icontains=query)
+        users = UserProfile.objects.all()
+    else:
+        results = None
+        users = None
+
+    content = {
+        'posts': results,
+        'users': users
+    }
+    
+    return render(request, 'carrot_app/search.html', content)
 
 def region_shop(request):
-    form = RegionShopForm()
-    return render(request, 'carrot_app/region_shop.html', {'form':form})
+    queryset = RegionShop.objects.all()
+    context = {'data':queryset}
+    
+    return render(request, 'carrot_app/region_shop.html', context)
+
+def region_shop_detail_view(request, shop_id):
+    if request.method == 'GET':
+        data = RegionShop.objects.get(id=shop_id)
+        context = {'data':data}
+    return render(request, 'carrot_app/region_shop_detail.html', context)
 
 def region_shop_registration(request):
+    
+    # 레기온 샾 기본 폼
     f = RegionShopForm()
-    form_set = inlineformset_factory(
-    RegionShop,
-    RegionShopProductPrice,
-    fields = (
-        'product_name',
-        'product_price',
-    ),
-    extra=2,
-    can_delete=True,
+    
+    # 래기온 프로덕트 프라이스 모델폼셋
+    product_formset = inlineformset_factory(
+        RegionShop,
+        RegionShopProductPrice,
+        fields = (
+            'product_name',
+            'product_price',
+            'option'
+        ),
+        extra=2,
+        can_delete=True,
     )
-    context = {'formset':form_set(instance=RegionShop())}
+    
+    # 레기온 이미지모델 폼셋 
+    image_set = inlineformset_factory(
+        RegionShop,
+        RegionShopImages,
+        fields = (
+            'image',
+        ),
+        extra=2,
+        can_delete=True
+    )
+    
+    if request.method == "POST":
+        form = RegionShopForm(request.POST, request.FILES)
+        product_formset = product_formset(request.POST, instance=RegionShop())
+        image_set = image_set(request.POST, request.FILES, instance=RegionShop())
+        
+        if form.is_valid() and product_formset.is_valid() and image_set.is_valid():
+            region = form.save()
+            p_instance = product_formset.save(commit=False)
+            image_instance = image_set.save(commit=False)
+            
+            for instance in p_instance:
+                instance.region_shop_id = region
+                instance.save()
+            
+            for instance in image_instance:
+                instance.shop_id = region
+                instance.save()
+            
+            return redirect('main')
+        else:
+            return redirect('region_registration')
+    
+    context = {'formset':product_formset(instance=RegionShop()),
+               'form':f, 
+               'image_set':image_set(instance=RegionShop())
+               }
     return render(request, 'carrot_app/region_shop_registration.html', context)
-
 
 # 채팅테스트
 
@@ -289,4 +364,3 @@ def create_or_join_chat(request, pk):
         created = True
 
     return JsonResponse({'success': True, 'chat_room_id': chat_room.pk, 'created': created})
-

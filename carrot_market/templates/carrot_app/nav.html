@@ -13,9 +13,17 @@
           <a href="/trade">
             <button id="trade-button">중고거래</button>
           </a>
+          <a href="/regionshop">
+            <button id='region-shop-btn'>동네가게</button>
+          </a>
           {% if user.is_authenticated %}
             <a href="/location">
               <button id="location-button">동네인증</button>
+            </a>
+          {% endif %}
+          {% if user.is_authenticated %}
+            <a href="/region_registration">
+              <button id="location-button">동네가게등록</button>
             </a>
           {% endif %}
 
