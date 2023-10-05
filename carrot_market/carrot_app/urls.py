@@ -27,6 +27,7 @@ urlpatterns = [
     path('set_region/', views.set_region, name='set_region'),
     path('set_region_certification/', views.set_region_certification, name='set_certification'),
     path('regionshop/', views.region_shop, name='region_shop'),
+    path('regionshop/<str:category>', views.region_shop, name ='region_shop_category'),
     path('region_registration/', views.region_shop_registration, name='region_registration'),
     path('region_shop_detail/<int:shop_id>', views.region_shop_detail_view, name='region_shop_detail'),
   
