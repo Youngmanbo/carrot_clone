@@ -36,7 +36,6 @@
         <div class="description-box">
           <h1>우리 동네<br>중고 직거래 마켓</h1>
           <p>동네 주민들과 가깝고 따뜻한 거래를 지금 경험해보세요</p>
-          {% comment %} <a href="{% url 'dangun_app:trade' %}"> {% endcomment %}
           <a href="trade">
             <button class="button-gray">인기매물 보기</button>
           </a>
@@ -87,21 +86,20 @@
       <div class="full-box trade-box">
         <div class="flex-box full-box card-container between">
           {% for post in posts %}
-
             <div class="card-box">
-              <a href="{% url 'dangun_app:trade_post' post.pk %}" class="trade-text-link">
+              <a href="{% url 'trade_post' post.pk %}" class="trade-text-link">
                 <div class="card-img">
-                  {% if post.images %}
-                    <img src="{{ post.images.url }}" alt="{{ post.title }}">
-                  {% endif %}
+                  {% for photo in post.itemimage_set.all %}{% if forloop.first %}
+                      <img src="{{ photo.item_image.url }}" alt="{{ post.title }}" class="block-box">
+                  {% endif %}{% endfor %}
                 </div>
                 <div class="card-info-box">
                   <h5>{{ post.title }}</h5>
                   <p class="bold">{{ post.price |intcomma}}원</p>
-                  <p>{{ post.location }}</p>
+                  <p>{{ post.region }}</p>
                   <div class="flex-box">
                     <p>조회
-                      {{ post.view_num }}</p>
+                      {{ post.item_views }}</p>
                     <p>·</p>
                     <p>채팅
                       {{ post.chat_num }}</p>

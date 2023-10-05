@@ -55,6 +55,10 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'carrot_app',
     'rest_framework',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.socialaccount',
+    'social_django',
 ]
 
 ASGI_APPLICATION = 'carrot_market.asgi.application'
@@ -67,6 +71,32 @@ CHANNEL_LAYERS = {
         },
     },
 }
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = secrets['GOOGLE_KEY']
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = secrets['GOOGLE_SECRET_KEY']
+SOCIAL_AUTH_GOOGLE_OAUTH2_REDIRECT_URI = 'http://127.0.0.1:8000/complete/google-oauth2/'
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.google.GoogleOAuth2',
+    'social_core.backends.naver.NaverOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)
+SOCIAL_AUTH_AUTHENTICATION_BACKENDS = [
+    'social_core.backends.naver.NaverOAuth2',
+    'social_core.backends.google.GoogleOAuth2'
+]
+
+# naver social login setting
+SOCIAL_AUTH_NAVER_KEY = secrets['NAVER_KEY']
+SOCIAL_AUTH_NAVER_SECRET = secrets['NAVER_SECRET_KEY']
+
+# login setting
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'main'
+SITE_ID = 1
+
+SOCIALACCOUNT_LOGIN_ON_GET = True
+ACCOUNT_LOGOUT_REDIRECT_URL = '/'
+ACCOUNT_LOGOUT_ON_GET = True
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

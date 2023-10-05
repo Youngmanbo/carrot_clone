@@ -10,29 +10,49 @@ from django.shortcuts               import render, redirect
 from django.db.models               import Q
 from .models                        import *
 from .forms                         import *
+from django.utils.decorators        import method_decorator
+from django.views                   import View
 
 # Create your views here.
 def main(request):
-    return render(request, 'carrot_app/main.html')
-
-def trade(request):
     try:
         item = Item.objects.filter(is_sold=False).order_by('-item_views')
-        users = UserProfile.objects.all()
     except:
         item = None
-        users = None
 
     content = {
         'posts': item,
-        'users': users
+    }
+    return render(request, 'carrot_app/main.html', content)
+
+def search(request):
+    query = request.GET.get('search')
+    
+    if query:
+        results = Item.objects.filter(Q(title__icontains=query) | Q(region__icontains=query))
+    else:
+        results = None
+
+    content = {
+        'posts': results
+    }
+    
+    return render(request, 'carrot_app/search.html', content)
+  
+def trade(request):
+    try:
+        item = Item.objects.filter(is_sold=False).order_by('-item_views')
+    except:
+        item = None
+
+    content = {
+        'posts': item,
     }
     
     return render(request, 'carrot_app/trade.html', content)
 
 def trade_post(request, post_id):
     item = Item.objects.get(id=post_id)
-    users = UserProfile.objects.all()
 
     if request.user.is_authenticated:
         if request.user != item.user_id:
@@ -49,8 +69,7 @@ def trade_post(request, post_id):
                 return redirect('trade')
 
     content = {
-        'post': item,
-        'users': users
+        'post': item
     }
 
     return render(request, 'carrot_app/trade_post.html', content)
@@ -71,12 +90,19 @@ def write(request):
         return redirect('location')
 
 def create_item(request):
+    user_profile = UserProfile.objects.get(user = request.user)
     if request.method == 'POST':
         form = ItemPost(request.POST, request.FILES)
         if form.is_valid():
             item = form.save(commit=False)
             item.user_id = request.user
+            item.region = user_profile.region
             item.save()
+            for img in request.FILES.getlist('item_image'):
+                photo = ItemImage()
+                photo.item_id_id = item.id
+                photo.item_image = img
+                photo.save()
             return redirect('trade_post', post_id=item.id)
     else:
         form = ItemPost()
@@ -92,21 +118,22 @@ def edit(request, id):
     
     if item:
         item.content = item.content.strip()
-        # images = ItemImage.objects.filter(item_id=id)
 
     if request.method == "POST":
         item.title = request.POST['title']
         item.price = request.POST['price']
         item.content = request.POST['content']
         item.sale_place = request.POST['sale_place']
-        # if 'item_image' in request.FILES:
-        #     images.item_image = request.FILES['item_image']
         item.save()
+        for img in request.FILES.getlist('item_image'):
+            photo = ItemImage()
+            photo.item_id_id = item.id
+            photo.item_image = img
+            photo.save()
         return redirect('trade_post', post_id=id)
     
     content = {
-        'post': item,
-        # 'item_image': images.item_image
+        'post': item
     }
     return render(request, 'carrot_app/write.html', content)
 
@@ -171,7 +198,7 @@ def chat(request):
 @login_required
 def logout(request):
     auth.logout(request)
-    return render(request, 'carrot_app/main.html')
+    return redirect('main')
 
     
 @login_required
@@ -213,26 +240,12 @@ def set_region_certification(request):
         messages.success(request, "인증되었습니다")
         return redirect('location')
 
-def search(request):
-    query = request.GET.get('search')
+def region_shop(request, category=None):
     
-    if query:
-        results = Item.objects.filter(Q(title__icontains=query))
-        # | Q(title__icontains=query)
-        users = UserProfile.objects.all()
+    if category:
+        queryset = RegionShop.objects.filter(category=category)
     else:
-        results = None
-        users = None
-
-    content = {
-        'posts': results,
-        'users': users
-    }
-    
-    return render(request, 'carrot_app/search.html', content)
-
-def region_shop(request):
-    queryset = RegionShop.objects.all()
+        queryset = RegionShop.objects.all()
     context = {'data':queryset}
     
     return render(request, 'carrot_app/region_shop.html', context)
@@ -252,24 +265,16 @@ def region_shop_registration(request):
     product_formset = inlineformset_factory(
         RegionShop,
         RegionShopProductPrice,
-        fields = (
-            'product_name',
-            'product_price',
-            'option'
-        ),
+        form=StyledProductForm,
         extra=2,
-        can_delete=True,
     )
     
     # 레기온 이미지모델 폼셋 
     image_set = inlineformset_factory(
         RegionShop,
         RegionShopImages,
-        fields = (
-            'image',
-        ),
+        form=StyledImageForm,
         extra=2,
-        can_delete=True
     )
     
     if request.method == "POST":
@@ -300,7 +305,7 @@ def region_shop_registration(request):
                }
     return render(request, 'carrot_app/region_shop_registration.html', context)
 
-# 채팅테스트
+
 
 def index(request): 
     return render(request, 'carrot_app/chat_index.html')
@@ -312,8 +317,10 @@ def chat_room(request, pk):
     chat_room = get_object_or_404(ChatRoom, pk=pk)
 
     # 내 ID가 포함된 방만 가져오기
-    chat_rooms = ChatRoom.objects.filter(Q(receiver_id=user) | Q(starter_id=user))
-
+    chat_rooms = ChatRoom.objects.filter(
+            Q(receiver_id=user) | Q(starter_id=user)
+        ).order_by('-latest_message_time')  # 최신 메시지 시간을 기준으로 내림차순 정렬
+    
     # 각 채팅방의 최신 메시지를 가져오기
     chat_room_data = []
     for room in chat_rooms:
@@ -325,21 +332,30 @@ def chat_room(request, pk):
                 'timestamp': latest_message.timestamp,
             })
 
+    # 상대방 정보 가져오기
+    if chat_room.receiver == user:
+        opponent = chat_room.starter
+    else:
+        opponent = chat_room.receiver
+
+    opponent_user = User.objects.get(pk=opponent.pk)
+
 
     # post의 상태 확인 및 처리
     if chat_room.item is None:
         seller = None
-        item = None
+        post = None
     else:
         seller = chat_room.item.user_id
-        item = chat_room.item
+        post = chat_room.item
 
     return render(request, 'carrot_app/chat_room.html', {
         'chat_room': chat_room,
         'chat_room_data': chat_room_data,
         'room_name': chat_room.pk,
         'seller': seller,
-        'item': item,
+        'post': post,
+        'opponent': opponent_user,
     })
 
 
@@ -364,3 +380,78 @@ def create_or_join_chat(request, pk):
         created = True
 
     return JsonResponse({'success': True, 'chat_room_id': chat_room.pk, 'created': created})
+
+
+# 가장 최근 채팅방 가져오기
+@login_required
+def get_latest_chat(request, pk):
+    user = request.user
+    # 1) 해당 pk인 채팅방 중 가장 최신 채팅방으로 리디렉션
+    try:
+        latest_chat_with_pk = ChatRoom.objects.filter(
+            Q(item_id=pk) &
+            (Q(receiver=user) | Q(starter=user))
+        ).latest('latest_message_time')
+        return JsonResponse({'success': True, 'chat_room_id': latest_chat_with_pk.room_number})
+    except ChatRoom.DoesNotExist:
+        pass
+
+    # 2) 위 경우가 없다면 내가 소속된 채팅방 전체 중 가장 최신 채팅방으로 리디렉션
+    try:
+        latest_chat = ChatRoom.objects.filter(
+            Q(receiver=user) | Q(starter=user)
+        ).latest('latest_message_time')
+        return JsonResponse({'success': True, 'chat_room_id': latest_chat.room_number})
+
+    # 3) 모두 없다면 현재 페이지로 리디렉션
+    except ChatRoom.DoesNotExist:
+        return redirect('carrot_app:alert', alert_message='진행중인 채팅이 없습니다.')
+        
+# nav/footer에서 채팅하기 눌렀을 때
+@login_required
+def get_latest_chat_no_pk(request):
+    user = request.user
+    try:
+        latest_chat = ChatRoom.objects.filter(
+            Q(receiver=user) | Q(starter=user),
+            latest_message_time__isnull=False
+        ).latest('latest_message_time')
+        return redirect('carrot_app:chat_room', pk=latest_chat.room_number)
+
+    except ChatRoom.DoesNotExist:
+        return redirect('carrot_app:alert', alert_message='진행중인 채팅이 없습니다.')
+    
+@method_decorator(login_required, name='dispatch')
+class ConfirmDealView(View):
+    def post(self, request, item_id):
+        post = get_object_or_404(Item, pk=item_id)
+        user = request.user
+
+        previous_url = request.META.get('HTTP_REFERER')
+        url_parts = previous_url.split('/')
+        original_post_id = url_parts[-2] if url_parts[-1] == '' else url_parts[-1]
+
+        chat_room = get_object_or_404(ChatRoom, room_number=original_post_id)
+
+
+        if chat_room.starter == user:
+            other_user = chat_room.receiver
+        else:
+            other_user = chat_room.starter
+
+        if chat_room is None:
+            messages.error(request, 'Chat room does not exist.')
+            return redirect('carrot_app:trade')
+        
+        # buyer를 설정하고, product_sold를 Y로 설정
+        post.buyer = chat_room.receiver if chat_room.starter == post.user else chat_room.starter
+        post.product_sold = 'Y'
+        post.save()
+        
+        # 거래가 확정되면 새로고침
+        return redirect('carrot_app:chat_room', pk=chat_room.room_number)
+
+      
+ # social login
+def social_login_view(request):
+    return render(request, 'registration/login.html')
