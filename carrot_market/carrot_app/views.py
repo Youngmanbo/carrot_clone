@@ -267,6 +267,7 @@ def region_shop_registration(request):
         RegionShopProductPrice,
         form=StyledProductForm,
         extra=1,
+        can_delete=True,
     )
     
     # 레기온 이미지모델 폼셋 
@@ -282,6 +283,8 @@ def region_shop_registration(request):
         product_formset = product_formset(request.POST, instance=RegionShop())
         image_set = image_set(request.POST, request.FILES, instance=RegionShop())
         
+        print(product_formset)
+        print(image_set)
         if form.is_valid() and product_formset.is_valid() and image_set.is_valid():
             region = form.save()
             p_instance = product_formset.save(commit=False)
