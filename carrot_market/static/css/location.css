@@ -30,6 +30,7 @@
     width:80%;
     padding:14px;
     border-radius: 2px;
+    outline: none;
 }
 
 .region-input button{
