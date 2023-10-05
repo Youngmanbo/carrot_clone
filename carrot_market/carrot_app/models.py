@@ -90,9 +90,9 @@ class RegionShop(models.Model):
     shopname              = models.CharField(max_length=50)
     address               = models.CharField(max_length=200, null=True)
     shopinfo              = models.TextField()
-    thumnail              = models.ImageField(upload_to=image_upload_to, height_field=None, width_field=None, null=True)
+    thumnail              = models.ImageField(upload_to=image_upload_to, height_field=None, width_field=None, null=True, blank=True)
     neighborhood          = models.CharField(max_length=50, blank=True, null=True)
-    category              = models.CharField(max_length=50, choices=CATEGORY_CHOICE)
+    category              = models.CharField(max_length=50, choices=CATEGORY_CHOICE, blank=True)
     
 @receiver(pre_save, sender=RegionShop)
 def extract_neighborhood(sender, instance, **kwargs):
@@ -120,10 +120,10 @@ def image_upload(instance, filename):
     return f"images/{filename}"
 class RegionShopImages(models.Model):
     shop_id               = models.ForeignKey(RegionShop, on_delete=models.CASCADE, related_name='image')
-    image                 = models.ImageField(upload_to=image_upload, height_field=None, width_field=None)
+    image                 = models.ImageField(upload_to=image_upload, height_field=None, width_field=None, blank=True, null=True)
     
 class RegionShopProductPrice(models.Model):
     region_shop_id        = models.ForeignKey(RegionShop, on_delete=models.CASCADE, related_name='price')
     product_name          = models.CharField(max_length=20)
-    product_price         = models.IntegerField()
+    product_price         = models.CharField(max_length=20)
     option                = models.CharField(max_length=200) 
