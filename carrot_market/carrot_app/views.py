@@ -460,3 +460,6 @@ class ConfirmDealView(View):
  # social login
 def social_login_view(request):
     return render(request, 'registration/login.html')
+
+def alert_view(request, alert_message):
+    return render(request, 'carrot_app/main.html', {'alert_message':alert_message})

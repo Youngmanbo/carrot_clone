@@ -116,6 +116,19 @@
   </div>
   {% include 'carrot_app/footer.html' %}
 
-</body>
 
+</body>
+<script>
+  {% if alert_message %}
+    var message = "{{alert_message}}"
+  {% else %}
+    var message = undefined
+  {% endif %}
+  window.addEventListener('DOMContentLoaded', function()
+{
+  if(message !== undefined){
+    alert("{{alert_message}}")
+  }
+});
+</script>
 </html>
