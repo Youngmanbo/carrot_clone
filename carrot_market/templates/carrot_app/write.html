@@ -42,11 +42,15 @@
                           <img src="{% static 'img/icon_photo.png' %}" alt="이미지 설명" id="imagePreview">
                         {% endif %}
                       {% else %}
-                          <img src="{% static 'img/icon_photo.png' %}" alt="이미지 설명" id="imagePreview">
+                        <div class="image-container">
+                          <ul class="image-list">
+                            <img src="{% static 'img/icon_photo.png' %}" alt="이미지 설명" id="imagePreview">
+                          </ul>
+                        </div>
                       {% endif %}
                       <input type="file" name="item_image" multiple accept="image/*" style="display: none;" onchange="previewImage(event);">
                     </label>
-                    <div class="controls">
+                    <div class="controls" onclick="slide();">
                       {% for photo in post.itemimage_set.all %}
                         {% if forloop.counter == 1%}
                           <input type="radio" name="slider" id="radio{{forloop.counter}}" checked>
@@ -92,5 +96,4 @@
         <script type="text/javascript" src="{% static 'js/write.js' %}"></script>
 
       </body>
-      <script src="{% static 'js/slide.js' %}"></script>
     </html>
