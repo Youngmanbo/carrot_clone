@@ -402,7 +402,7 @@ def get_latest_chat(request, pk):
 
     # 3) 모두 없다면 현재 페이지로 리디렉션
     except ChatRoom.DoesNotExist:
-        return redirect('carrot_app:alert', alert_message='진행중인 채팅이 없습니다.')
+        return redirect('alert', alert_message='진행중인 채팅이 없습니다.')
         
 # nav/footer에서 채팅하기 눌렀을 때
 @login_required
@@ -413,10 +413,10 @@ def get_latest_chat_no_pk(request):
             Q(receiver=user) | Q(starter=user),
             latest_message_time__isnull=False
         ).latest('latest_message_time')
-        return redirect('carrot_app:chat_room', pk=latest_chat.room_number)
+        return redirect('chat_room', pk=latest_chat.room_number)
 
     except ChatRoom.DoesNotExist:
-        return redirect('carrot_app:alert', alert_message='진행중인 채팅이 없습니다.')
+        return redirect('alert', alert_message='진행중인 채팅이 없습니다.')
     
 @method_decorator(login_required, name='dispatch')
 class ConfirmDealView(View):
