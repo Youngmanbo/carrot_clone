@@ -22,7 +22,7 @@ h3{
 
 }
 
-.slide-box {
+.image-list {
     gap: 10px;
     display: flex;
     overflow-x: auto;
@@ -30,7 +30,8 @@ h3{
     scroll-behavior: smooth;
 }
 
-.slide-box img{
+.image-item {
+    width: 100%;
     scroll-snap-align: start;
     flex-shrink: 0;
     transform-origin: center center;
@@ -41,7 +42,9 @@ h3{
     display: flex;
     justify-content: center;
     align-items: center;
+}
 
+.image-item img{
     width: 100%;
     height: 380px;
     object-fit: contain;
@@ -141,4 +144,25 @@ hr{
 
 .noshow {
     display: none; 
+}
+
+
+/* radio */
+.controls {
+    display: flex;
+    justify-content: center;
+}
+
+[type="radio"] {
+    appearance: none;
+    border-radius: 50px;
+    transition: border 0.5s ease-in-out;
+}
+  
+[type="radio"]:checked {
+    background-color: grey;
+}
+  
+[type="radio"]:hover {
+    background-color: #cecece;
 }

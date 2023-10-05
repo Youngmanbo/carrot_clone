@@ -21,15 +21,28 @@
       <div class="container column">
         <div class="post-box">
           {% block content %}
-          <div class="slide-box">
             {% if post.itemimage_set.all %}
-              {% for photo in post.itemimage_set.all %}
-                  <img src="{{ photo.item_image.url }}" alt="{{ post.title }}" class="block-box">
-              {% endfor %}
+              <div class="image-container">
+                <ul class='image-list'>
+                  {% for photo in post.itemimage_set.all %}
+                    <li class='image-item' id='slider{{forloop.counter}}'>
+                      <img src="{{ photo.item_image.url }}" alt="{{ post.title }}" class="block-box">
+                    </li>
+                  {% endfor %}
+                </ul>
+              </div>
+              <div class="controls">
+                {% for photo in post.itemimage_set.all %}
+                  {% if forloop.counter == 1%}
+                    <input type="radio" name="slider" id="radio{{forloop.counter}}" checked>
+                  {% else %}
+                    <input type="radio" name="slider" id="radio{{forloop.counter}}" >
+                  {% endif %}  
+                {% endfor %}
+              </div>
             {% else %}
               <img src="{{ post.images.url }}" alt="{{ post.title }}" class="block-box">
             {% endif %}
-          </div>
             <div class="flex-box between info-button-box">
               <div class="user-info">
                 <h6>{{ post.user_id }}</h6>
@@ -107,7 +120,6 @@
         document.querySelector('.black-bg').classList.add('noshow');
       }
   })
-
   </script>
-
+  <script src="{% static 'js/slide.js' %}"></script>
 </html>
