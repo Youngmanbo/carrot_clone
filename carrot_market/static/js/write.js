@@ -11,13 +11,10 @@
 function previewImage(event) {
   let cnt = 0;
   const length = document.querySelectorAll('.image-item').length;
-  if (length) {
-    for (i = 0; i < length; i++) {
-      document.querySelectorAll(".image-item")[i].remove();
-      document.querySelector(".controls").children[i].remove();
-    }
-    cnt = 0;
-  }
+  
+  // imgSelect img 숨기기
+  const imagePreview = document.getElementById("imagePreview");
+  imagePreview.style.display = "none";
 
   for(let image of event.target.files) {
     let reader = new FileReader();
@@ -27,7 +24,11 @@ function previewImage(event) {
       let imglist = document.createElement("li");
       imglist.setAttribute('class', 'image-item');
       cnt += 1;
-      imglist.setAttribute('id', 'slider' + cnt);
+      if (length) {
+        imglist.setAttribute('id', 'slider' + (cnt+length));
+      } else {
+        imglist.setAttribute('id', 'slider' + cnt);
+      }
       let img = document.createElement("img");
       img.setAttribute('src', reader.result);
       img.setAttribute('class', 'img-upload-fit');
@@ -42,12 +43,10 @@ function previewImage(event) {
       if (length) {
         radio.setAttribute('id', 'radio' + (cnt+length));
       } else {
+        radio.setAttribute('id', 'radio' + cnt);
         if (cnt == 1) {
-          radio.setAttribute('id', 'radio' + cnt);
           radio.setAttribute('checked', 'checked');
-        } else {
-          radio.setAttribute('id', 'radio' + cnt);
-        };
+        }
       };
       document.querySelector(".controls").appendChild(radio);
     };

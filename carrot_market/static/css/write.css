@@ -62,21 +62,13 @@ label{
 .image-list {
   gap: 10px;
   display: flex;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
 }
 
 .image-item {
   width: 100%;
-  scroll-snap-align: start;
   flex-shrink: 0;
-  transform-origin: center center;
-  transform: scale(1);
-  transition: transform 0.5s;
   position: relative;
-
-
+  
   display: flex;
   justify-content: center;
   align-items: center;
