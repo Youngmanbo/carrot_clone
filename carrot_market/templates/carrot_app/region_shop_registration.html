@@ -37,15 +37,19 @@
                     {{product_form.product_price}}
                     <h2 class='cyberpunk glitched'>옵션 : </h2>
                     {{product_form.option}}
+                    <h2 class='cyberpunk glitched'>삭제 : </h2>
+                    {{product_form.DELETE}}
                 {% endfor %}
             </div>
             <button type="button" id="add-product-form-btn" class='cyberpunk2077 blue'>상품 폼 추가하기</button>
+            {{ image_set.management_form }}
             <div class="image-form" id='image-form-container'>
                 {% for image_form in image_set %}
                     <h2 class='cyberpunk glitched'>이미지등록 : </h2>
                     {{image_form.image}}
+                    <h2 class='cyberpunk glitched'>삭제 : </h2>
+                    {{image_form.DELETE}}
                 {% endfor %}
-                {{ image_set.management_form }}
             </div>
             <button type="button" id="add-image-form-btn" class='cyberpunk2077 purple'>이미지 폼 추가하기</button>
             <button class='cyberpunk2077 red' type="submit">제출</button>

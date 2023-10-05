@@ -21,7 +21,7 @@
               <button id="location-button">동네인증</button>
             </a>
           {% endif %}
-          {% if user.is_authenticated %}
+          {% if user.is_superuser %}
             <a href="/region_registration">
               <button id="location-button">동네가게등록</button>
             </a>

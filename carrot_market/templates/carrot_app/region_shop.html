@@ -30,7 +30,7 @@
             <h1>다양한 동네가게를 볼 수 있어요</h1>
         </div>
         <div class="category">
-            <a href="{% url "region_shop_category" category='all' %}">
+            <a href="{% url "region_shop" %}">
                 <button class="category-btn" value='전체'>전체</button>
             </a>
             <a href="{% url "region_shop_category" category='restaurant' %}">
@@ -64,10 +64,10 @@
                                 </div>
                                 <div class="list-content">
                                     <div class="list-content-item-name-wraper">
-                                        <div class="list-content-item-name">
+                                        <div class="list-content-item-name word bold">
                                             {{item.shopname}}
                                         </div>
-                                        <div class="list-content-item-region">
+                                        <div class="list-content-item-region word">
                                             {{item.neighborhood}}
                                         </div>
                                     </div>

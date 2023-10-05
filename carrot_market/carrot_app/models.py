@@ -126,4 +126,4 @@ class RegionShopProductPrice(models.Model):
     region_shop_id        = models.ForeignKey(RegionShop, on_delete=models.CASCADE, related_name='price')
     product_name          = models.CharField(max_length=20)
     product_price         = models.CharField(max_length=20)
-    option                = models.CharField(max_length=200) 
+    option                = models.CharField(max_length=200, blank=True) 

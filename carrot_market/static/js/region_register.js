@@ -3,10 +3,10 @@ function addForm(formContainerId, formsetName) {
     const formContainer = document.getElementById(formContainerId);
     const totalFormsInput = document.getElementById('id_' + formsetName + '-TOTAL_FORMS');
     const totalForms = parseInt(totalFormsInput.value);
-
+    console.log(totalFormsInput);
     // 새로운 폼을 생성하고 필요한 수정을 수행
     const newForm = document.createElement('div');
-    newForm.innerHTML = formContainer.innerHTML;  // 첫 번째 폼 복제
+    newForm.innerHTML = formContainer.innerHTML; // 첫 번째 폼 복제
     const inputs = newForm.querySelectorAll('input, select, textarea');
     console.log(newForm);
 
@@ -26,6 +26,8 @@ function addForm(formContainerId, formsetName) {
     // TOTAL_FORMS 업데이트
     totalFormsInput.value = totalForms + 1;
 }
+
+
 var productAddBtn = document.getElementById('add-product-form-btn');
 productAddBtn.addEventListener('click', function(event){
     console.log("버튼")

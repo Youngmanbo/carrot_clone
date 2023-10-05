@@ -158,6 +158,7 @@ def login(request):
 
                 # 로그인이 성공한 경우
                 if user is not None:
+                    user.backend = 'django.contrib.auth.backends.ModelBackend'
                     custom_login(request, user) # 로그인 처리 및 세션에 사용자 정보 저장
                     return redirect('main')  # 리다이렉션
         return render(request, 'registration/login.html', {'form': form}) #폼을 템플릿으로 전달
@@ -180,6 +181,7 @@ def register(request):
                 user = User.objects.create_user(username=username, password=password1)
                 
                 # 유저를 로그인 상태로 만듦
+                user.backend = 'django.contrib.auth.backends.ModelBackend'
                 custom_login(request, user)
             
                 return redirect('login')
@@ -267,6 +269,7 @@ def region_shop_registration(request):
         RegionShopProductPrice,
         form=StyledProductForm,
         extra=1,
+        can_delete=True,
     )
     
     # 레기온 이미지모델 폼셋 
@@ -282,6 +285,8 @@ def region_shop_registration(request):
         product_formset = product_formset(request.POST, instance=RegionShop())
         image_set = image_set(request.POST, request.FILES, instance=RegionShop())
         
+        print(product_formset)
+        print(image_set)
         if form.is_valid() and product_formset.is_valid() and image_set.is_valid():
             region = form.save()
             p_instance = product_formset.save(commit=False)
