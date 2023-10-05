@@ -51,7 +51,7 @@
         <div class="shop-detail region-flex">
             <h6>정보</h6>
             <p>{{data.shopinfo}}</p>
-            <div class="shop-location">
+            <div id= 'map' class="shop-location" style="width:100%;height:350px;">
 
             </div>
         </div>
@@ -78,5 +78,11 @@
     </div>
     {% include 'carrot_app/footer.html' %}
 </body>
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=06b71a5db40aca812f7ae8bff82d58b9&libraries=services"></script>
 <script src="{% static 'js/slide.js' %}"></script>
+<script>
+    var shopAddress = "{{data.address}}";
+    var shopName = "{{data.shopname}}";
+</script>
+<script src="{% static 'js/shop_location.js' %}"></script>
 </html>

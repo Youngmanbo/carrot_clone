@@ -1,20 +1,45 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/cyberpunk.css' %}">
+    <link rel="stylesheet" href="{% static 'css/region_register.css' %}">
     <title>Document</title>
 </head>
 <body>
-    <form action="{% url 'region_registration' %}" method='POST' enctype="multipart/form-data">
-        {% csrf_token %}
-        <p>가게이름 : {{form.shopname}}</p>
-        <p>주소 : {{form.address}}</p>
-        <p>썸네일 : {{form.thumnail}}</p>
-        <p>가게 정보 : {{form.shopinfo}}</p>
-        {{formset.as_p}}
-        {{image_set.as_p}}
-        <input type="submit">
-    </form>
+    <div class="form-container">
+        <form action="{% url 'region_registration' %}" method='POST' enctype="multipart/form-data" class='cyberpunk'>
+            {% csrf_token %}
+            <h2 class='cyberpunk glitched'>가게이름 :</h2>
+            {{form.shopname}}
+            <h2 class='cyberpunk glitched'>주소 :</h2>
+            {{form.address}}
+            <h2 class='cyberpunk glitched'>썸네일 : </h2>
+            {{form.thumnail}}
+            <h2 class='cyberpunk glitched'>가게 정보 : </h2>
+            {{form.shopinfo}}
+            <h2 class='cyberpunk glitched'>카테고리 : </h2>
+            {{form.category}}
+            {% comment %} {{formset.as_p}}
+            {{image_set.as_p}} {% endcomment %}
+            {% for product_form in formset.forms %}
+                <h2 class='cyberpunk glitched'>상품이름 : </h2>
+                {{product_form.product_name}}
+                <h2 class='cyberpunk glitched'>상품가격 : </h2>
+                {{product_form.product_price}}
+                <h2 class='cyberpunk glitched'>옵션 : </h2>
+                {{product_form.option}}
+            {% endfor %}
+            {{ formset.management_form }}
+            {% for image_form in image_set %}
+                <h2 class='cyberpunk glitched'>이미지등록 : </h2>
+                {{image_form.image}}
+            {% endfor %}
+            {{ image_set.management_form }}
+            <button class='cyberpunk2077 red' type="submit">제출</button>
+        </form>
+    </div>
 </body>
 </html>
