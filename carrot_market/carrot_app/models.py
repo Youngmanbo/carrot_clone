@@ -22,10 +22,10 @@ class Item(models.Model):
     item_views          = models.PositiveIntegerField(default = 0)
     create_at           = models.DateTimeField(auto_now_add = True)
     dibs                = models.BooleanField(default = False)
-    category            = models.CharField(max_length = 10)
     is_sold             = models.BooleanField(default = False)
     sale_place          = models.CharField(max_length = 30)
     region              = models.CharField(max_length = 30, default = None)
+    chat_num            = models.PositiveIntegerField(default = 0)
     
     class Meta:
         pass
