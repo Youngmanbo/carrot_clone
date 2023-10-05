@@ -40,6 +40,34 @@
     cursor:pointer;
 }
 
+/* social_login 요소를 flex로 배치하여 로그인 버튼을 가로로 나란히 배치합니다. */
+.social_login {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px; /* 버튼 간격 조절 */
+  }
+  
+  .social_btn {
+    width: 48%; 
+    background-color: #fff; 
+    border-radius: 100px;
+    padding: 13px;
+    border: none;
+    color: #000;
+    font-size: 16px;
+    text-align: center;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  
+  .naver_btn {
+    background-color: #03C75A;
+  }
+  
+  .social_btn + .social_btn {
+    margin-left: 10px;
+  }  
+
 .register-reco{
     display: flex;
     flex-direction: column;

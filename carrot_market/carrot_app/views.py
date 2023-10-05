@@ -15,26 +15,44 @@ from django.views                   import View
 
 # Create your views here.
 def main(request):
-    return render(request, 'carrot_app/main.html')
-
-def trade(request):
     try:
         item = Item.objects.filter(is_sold=False).order_by('-item_views')
-        users = UserProfile.objects.all()
     except:
         item = None
-        users = None
 
     content = {
         'posts': item,
-        'users': users
+    }
+    return render(request, 'carrot_app/main.html', content)
+
+def search(request):
+    query = request.GET.get('search')
+    
+    if query:
+        results = Item.objects.filter(Q(title__icontains=query) | Q(region__icontains=query))
+    else:
+        results = None
+
+    content = {
+        'posts': results
+    }
+    
+    return render(request, 'carrot_app/search.html', content)
+  
+def trade(request):
+    try:
+        item = Item.objects.filter(is_sold=False).order_by('-item_views')
+    except:
+        item = None
+
+    content = {
+        'posts': item,
     }
     
     return render(request, 'carrot_app/trade.html', content)
 
 def trade_post(request, post_id):
     item = Item.objects.get(id=post_id)
-    users = UserProfile.objects.all()
 
     if request.user.is_authenticated:
         if request.user != item.user_id:
@@ -51,8 +69,7 @@ def trade_post(request, post_id):
                 return redirect('trade')
 
     content = {
-        'post': item,
-        'users': users
+        'post': item
     }
 
     return render(request, 'carrot_app/trade_post.html', content)
@@ -73,12 +90,19 @@ def write(request):
         return redirect('location')
 
 def create_item(request):
+    user_profile = UserProfile.objects.get(user = request.user)
     if request.method == 'POST':
         form = ItemPost(request.POST, request.FILES)
         if form.is_valid():
             item = form.save(commit=False)
             item.user_id = request.user
+            item.region = user_profile.region
             item.save()
+            for img in request.FILES.getlist('item_image'):
+                photo = ItemImage()
+                photo.item_id_id = item.id
+                photo.item_image = img
+                photo.save()
             return redirect('trade_post', post_id=item.id)
     else:
         form = ItemPost()
@@ -94,21 +118,22 @@ def edit(request, id):
     
     if item:
         item.content = item.content.strip()
-        # images = ItemImage.objects.filter(item_id=id)
 
     if request.method == "POST":
         item.title = request.POST['title']
         item.price = request.POST['price']
         item.content = request.POST['content']
         item.sale_place = request.POST['sale_place']
-        # if 'item_image' in request.FILES:
-        #     images.item_image = request.FILES['item_image']
         item.save()
+        for img in request.FILES.getlist('item_image'):
+            photo = ItemImage()
+            photo.item_id_id = item.id
+            photo.item_image = img
+            photo.save()
         return redirect('trade_post', post_id=id)
     
     content = {
-        'post': item,
-        # 'item_image': images.item_image
+        'post': item
     }
     return render(request, 'carrot_app/write.html', content)
 
@@ -173,7 +198,7 @@ def chat(request):
 @login_required
 def logout(request):
     auth.logout(request)
-    return render(request, 'carrot_app/main.html')
+    return redirect('main')
 
     
 @login_required
@@ -215,26 +240,12 @@ def set_region_certification(request):
         messages.success(request, "인증되었습니다")
         return redirect('location')
 
-def search(request):
-    query = request.GET.get('search')
+def region_shop(request, category=None):
     
-    if query:
-        results = Item.objects.filter(Q(title__icontains=query))
-        # | Q(title__icontains=query)
-        users = UserProfile.objects.all()
+    if category:
+        queryset = RegionShop.objects.filter(category=category)
     else:
-        results = None
-        users = None
-
-    content = {
-        'posts': results,
-        'users': users
-    }
-    
-    return render(request, 'carrot_app/search.html', content)
-
-def region_shop(request):
-    queryset = RegionShop.objects.all()
+        queryset = RegionShop.objects.all()
     context = {'data':queryset}
     
     return render(request, 'carrot_app/region_shop.html', context)
@@ -254,24 +265,16 @@ def region_shop_registration(request):
     product_formset = inlineformset_factory(
         RegionShop,
         RegionShopProductPrice,
-        fields = (
-            'product_name',
-            'product_price',
-            'option'
-        ),
-        extra=2,
-        can_delete=True,
+        form=StyledProductForm,
+        extra=1,
     )
     
     # 레기온 이미지모델 폼셋 
     image_set = inlineformset_factory(
         RegionShop,
         RegionShopImages,
-        fields = (
-            'image',
-        ),
-        extra=2,
-        can_delete=True
+        form=StyledImageForm,
+        extra=1,
     )
     
     if request.method == "POST":
@@ -447,3 +450,8 @@ class ConfirmDealView(View):
         
         # 거래가 확정되면 새로고침
         return redirect('carrot_app:chat_room', pk=chat_room.room_number)
+
+      
+ # social login
+def social_login_view(request):
+    return render(request, 'registration/login.html')
