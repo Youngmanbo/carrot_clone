@@ -75,6 +75,10 @@ class StyledProductForm(forms.ModelForm):
         self.fields['product_name'].widget.attrs['class'] = 'cyberpunk'
         self.fields['product_price'].widget.attrs['class'] = 'cyberpunk'
         self.fields['option'].widget.attrs['class'] = 'cyberpunk'
+    
+    def add_fields(self, form, index):
+        super().add_fields(form, index)
+        form.fields['DELETE'].widget.attrs['class'] = 'cyberpunk'
 
 class StyledImageForm(forms.ModelForm):
     class Meta:
@@ -85,3 +89,7 @@ class StyledImageForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         # 각 필드에 클래스 추가
         self.fields['image'].widget.attrs['class'] = 'cyberpunk'
+    
+    def add_fields(self, form, index):
+        super().add_fields(form, index)
+        form.fields['DELETE'].widget.attrs['class'] = 'cyberpunk'
