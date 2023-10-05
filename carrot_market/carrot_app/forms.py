@@ -55,7 +55,9 @@ class RegionShopForm(ModelForm):
         self.fields['shopinfo'].widget.attrs['class'] = 'cyberpunk'
         self.fields['thumnail'].widget.attrs['class'] = 'cyberpunk2077 red'
         self.fields['neighborhood'].widget.attrs['class'] = 'cyberpunk'
-        self.fields['category'].widget.attrs['class'] = 'cyberpunk'
+        self.fields['category'].widget.attrs['class'] = 'cyberpunk radio-group'
+        
+    
 
 class StyledProductForm(forms.ModelForm):
     class Meta:

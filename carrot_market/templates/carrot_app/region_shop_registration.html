@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'css/cyberpunk.css' %}">
     <link rel="stylesheet" href="{% static 'css/region_register.css' %}">
+    <link rel="stylesheet" href="{% static 'css/cyberpunk.css' %}">
     <title>Document</title>
 </head>
 <body>
@@ -21,25 +21,37 @@
             <h2 class='cyberpunk glitched'>가게 정보 : </h2>
             {{form.shopinfo}}
             <h2 class='cyberpunk glitched'>카테고리 : </h2>
-            {{form.category}}
-            {% comment %} {{formset.as_p}}
-            {{image_set.as_p}} {% endcomment %}
-            {% for product_form in formset.forms %}
-                <h2 class='cyberpunk glitched'>상품이름 : </h2>
-                {{product_form.product_name}}
-                <h2 class='cyberpunk glitched'>상품가격 : </h2>
-                {{product_form.product_price}}
-                <h2 class='cyberpunk glitched'>옵션 : </h2>
-                {{product_form.option}}
+            {% for radio in form.category %}
+                {% if forloop.counter >= 2 %}
+                    <div class="radio-container">
+                    {{radio}}
+                    </div>
+                {% endif %}
             {% endfor %}
             {{ formset.management_form }}
-            {% for image_form in image_set %}
-                <h2 class='cyberpunk glitched'>이미지등록 : </h2>
-                {{image_form.image}}
-            {% endfor %}
-            {{ image_set.management_form }}
+            <div class="product-form" id='product-form-container'>
+                {% for product_form in formset.forms %}
+                    <h2 class='cyberpunk glitched'>상품이름 : </h2>
+                    {{product_form.product_name}}
+                    <h2 class='cyberpunk glitched'>상품가격 : </h2>
+                    {{product_form.product_price}}
+                    <h2 class='cyberpunk glitched'>옵션 : </h2>
+                    {{product_form.option}}
+                {% endfor %}
+            </div>
+            <button type="button" id="add-product-form-btn" class='cyberpunk2077 blue'>상품 폼 추가하기</button>
+            <div class="image-form" id='image-form-container'>
+                {% for image_form in image_set %}
+                    <h2 class='cyberpunk glitched'>이미지등록 : </h2>
+                    {{image_form.image}}
+                {% endfor %}
+                {{ image_set.management_form }}
+            </div>
+            <button type="button" id="add-image-form-btn" class='cyberpunk2077 purple'>이미지 폼 추가하기</button>
             <button class='cyberpunk2077 red' type="submit">제출</button>
         </form>
     </div>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="{% static 'js/region_register.js'%}"></script>
 </body>
 </html>
