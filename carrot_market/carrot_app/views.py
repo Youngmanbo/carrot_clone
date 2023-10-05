@@ -384,6 +384,10 @@ def create_or_join_chat(request, pk):
         chat_room.save()
         created = True
 
+        # 채팅방 수 증가
+        item.chat_num+=1
+        item.save()
+
     return JsonResponse({'success': True, 'chat_room_id': chat_room.pk, 'created': created})
 
 
