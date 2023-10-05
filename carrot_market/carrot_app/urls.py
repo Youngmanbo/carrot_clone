@@ -20,11 +20,18 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('search/', views.search, name='search'),
     path('regionshop/', views.region_shop, name='region_shop'),
+    # path("chat_index", views.index, name='index'),  
+    # path('chat_index/<int:pk>/', views.chat_room, name='chat_room'),
+    # path('create_or_join_chat/<int:pk>/', views.create_or_join_chat, name='create_or_join_chat'),
+    path('region_registration/', views.region_shop_registration, name='region_registration'),
+    path('region_shop_detail/<int:shop_id>', views.region_shop_detail_view, name='region_shop_detail'),
+
+
     path("chat_index", views.index, name='index'),  
     path('chat_index/<int:pk>/', views.chat_room, name='chat_room'),
     path('create_or_join_chat/<int:pk>/', views.create_or_join_chat, name='create_or_join_chat'),
-    path('region_registration/', views.region_shop_registration, name='region_registration'),
-    path('region_shop_detail/<int:shop_id>', views.region_shop_detail_view, name='region_shop_detail')
+    path('get_latest_chat/', views.get_latest_chat_no_pk, name='get_latest_chat_no_pk'),
+    path('get_latest_chat/<int:pk>/', views.get_latest_chat, name='get_latest_chat'),
 ]
 
 if settings.DEBUG:

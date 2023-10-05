@@ -10,6 +10,8 @@ from django.shortcuts               import render, redirect
 from django.db.models               import Q
 from .models                        import *
 from .forms                         import *
+from django.utils.decorators        import method_decorator
+from django.views                   import View
 
 # Create your views here.
 def main(request):
@@ -300,7 +302,7 @@ def region_shop_registration(request):
                }
     return render(request, 'carrot_app/region_shop_registration.html', context)
 
-# 채팅테스트
+
 
 def index(request): 
     return render(request, 'carrot_app/chat_index.html')
@@ -312,8 +314,10 @@ def chat_room(request, pk):
     chat_room = get_object_or_404(ChatRoom, pk=pk)
 
     # 내 ID가 포함된 방만 가져오기
-    chat_rooms = ChatRoom.objects.filter(Q(receiver_id=user) | Q(starter_id=user))
-
+    chat_rooms = ChatRoom.objects.filter(
+            Q(receiver_id=user) | Q(starter_id=user)
+        ).order_by('-latest_message_time')  # 최신 메시지 시간을 기준으로 내림차순 정렬
+    
     # 각 채팅방의 최신 메시지를 가져오기
     chat_room_data = []
     for room in chat_rooms:
@@ -325,21 +329,30 @@ def chat_room(request, pk):
                 'timestamp': latest_message.timestamp,
             })
 
+    # 상대방 정보 가져오기
+    if chat_room.receiver == user:
+        opponent = chat_room.starter
+    else:
+        opponent = chat_room.receiver
+
+    opponent_user = User.objects.get(pk=opponent.pk)
+
 
     # post의 상태 확인 및 처리
     if chat_room.item is None:
         seller = None
-        item = None
+        post = None
     else:
         seller = chat_room.item.user_id
-        item = chat_room.item
+        post = chat_room.item
 
     return render(request, 'carrot_app/chat_room.html', {
         'chat_room': chat_room,
         'chat_room_data': chat_room_data,
         'room_name': chat_room.pk,
         'seller': seller,
-        'item': item,
+        'post': post,
+        'opponent': opponent_user,
     })
 
 
@@ -364,3 +377,73 @@ def create_or_join_chat(request, pk):
         created = True
 
     return JsonResponse({'success': True, 'chat_room_id': chat_room.pk, 'created': created})
+
+
+# 가장 최근 채팅방 가져오기
+@login_required
+def get_latest_chat(request, pk):
+    user = request.user
+    # 1) 해당 pk인 채팅방 중 가장 최신 채팅방으로 리디렉션
+    try:
+        latest_chat_with_pk = ChatRoom.objects.filter(
+            Q(item_id=pk) &
+            (Q(receiver=user) | Q(starter=user))
+        ).latest('latest_message_time')
+        return JsonResponse({'success': True, 'chat_room_id': latest_chat_with_pk.room_number})
+    except ChatRoom.DoesNotExist:
+        pass
+
+    # 2) 위 경우가 없다면 내가 소속된 채팅방 전체 중 가장 최신 채팅방으로 리디렉션
+    try:
+        latest_chat = ChatRoom.objects.filter(
+            Q(receiver=user) | Q(starter=user)
+        ).latest('latest_message_time')
+        return JsonResponse({'success': True, 'chat_room_id': latest_chat.room_number})
+
+    # 3) 모두 없다면 현재 페이지로 리디렉션
+    except ChatRoom.DoesNotExist:
+        return redirect('carrot_app:alert', alert_message='진행중인 채팅이 없습니다.')
+        
+# nav/footer에서 채팅하기 눌렀을 때
+@login_required
+def get_latest_chat_no_pk(request):
+    user = request.user
+    try:
+        latest_chat = ChatRoom.objects.filter(
+            Q(receiver=user) | Q(starter=user),
+            latest_message_time__isnull=False
+        ).latest('latest_message_time')
+        return redirect('carrot_app:chat_room', pk=latest_chat.room_number)
+
+    except ChatRoom.DoesNotExist:
+        return redirect('carrot_app:alert', alert_message='진행중인 채팅이 없습니다.')
+    
+@method_decorator(login_required, name='dispatch')
+class ConfirmDealView(View):
+    def post(self, request, item_id):
+        post = get_object_or_404(Item, pk=item_id)
+        user = request.user
+
+        previous_url = request.META.get('HTTP_REFERER')
+        url_parts = previous_url.split('/')
+        original_post_id = url_parts[-2] if url_parts[-1] == '' else url_parts[-1]
+
+        chat_room = get_object_or_404(ChatRoom, room_number=original_post_id)
+
+
+        if chat_room.starter == user:
+            other_user = chat_room.receiver
+        else:
+            other_user = chat_room.starter
+
+        if chat_room is None:
+            messages.error(request, 'Chat room does not exist.')
+            return redirect('carrot_app:trade')
+        
+        # buyer를 설정하고, product_sold를 Y로 설정
+        post.buyer = chat_room.receiver if chat_room.starter == post.user else chat_room.starter
+        post.product_sold = 'Y'
+        post.save()
+        
+        # 거래가 확정되면 새로고침
+        return redirect('carrot_app:chat_room', pk=chat_room.room_number)
