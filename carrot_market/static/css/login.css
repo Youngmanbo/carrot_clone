@@ -48,25 +48,41 @@
   }
   
   .social_btn {
+    display: flex;
+    align-items: center;
     width: 48%; 
     background-color: #fff; 
     border-radius: 100px;
-    padding: 13px;
+    padding: 9px;
     border: none;
     color: #000;
     font-size: 16px;
     text-align: center;
     font-weight: 700;
     cursor: pointer;
+    text-decoration: none;
+  }
+
+  .social_btn:hover {
+    background-color: #f2f2f2;
   }
   
-  .naver_btn {
-    background-color: #03C75A;
+  .google_logo, .naver_logo{
+    width : 30px;
+    height : 30px;
+    margin-right: 20px;
+    margin-left: 20px;
   }
   
   .social_btn + .social_btn {
     margin-left: 10px;
   }  
+
+  .google_logo_text, .naver_logo_text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
 .register-reco{
     display: flex;
