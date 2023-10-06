@@ -12,7 +12,7 @@ from .models                        import *
 from .forms                         import *
 from django.utils.decorators        import method_decorator
 from django.views                   import View
-
+import openai
 # Create your views here.
 def main(request):
     try:
@@ -463,3 +463,10 @@ def social_login_view(request):
 
 def alert_view(request, alert_message):
     return render(request, 'carrot_app/main.html', {'alert_message':alert_message})
+
+def gpt_view(request):
+    
+    if request.method == 'GET':
+        pass
+    
+    return render(request, 'test.html')

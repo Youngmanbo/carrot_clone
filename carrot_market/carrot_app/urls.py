@@ -6,6 +6,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('', views.main, name='main'),
     path('alert/<str:alert_message>', views.alert_view, name='alert'),
+    path('test', views.gpt_view, name='gpt'),
   
     # 로그인/아웃, 회원가입 기능 관련
     path('login/', views.login, name='login'),
